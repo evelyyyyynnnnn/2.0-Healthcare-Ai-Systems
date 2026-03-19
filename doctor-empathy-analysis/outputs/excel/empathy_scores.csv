@@ -1,0 +1,12 @@
+﻿Case_ID,Doctor_Name,Patient_Age,Patient_Gender,Disease_Category,Consultation_Date,Total_Empathy_Score,Empathy_Density,Word_Count,Dialogue_Length,Empathy_Features_Count,Thank_Trust_Score,Understanding_Score,Care_Attention_Score,Comfort_Support_Score,Listening_Confirmation_Score,Patient_Explanation_Score
+0,,,,,,0.8333333333333334,0.0,0,310,0,0,0,0,0,0,0
+1,,,,,,2.1,0.0,0,284,0,0,0,0,0,0,0
+2,,,,,,4.266666666666667,0.0,0,252,0,0,0,0,0,0,0
+3,,,,,,2.1759999999999997,0.0,0,1059,0,0,0,0,0,0,0
+4,,,,,,1.4666666666666668,0.0,0,571,0,0,0,0,0,0,0
+5,,,,,,0.9400000000000002,0.0,0,203,0,0,0,0,0,0,0
+6,,,,,,1.3,0.0,0,250,0,0,0,0,0,0,0
+7,,,,,,0.3666666666666667,0.0,0,643,0,0,0,0,0,0,0
+8,,,,,,0.5,0.0,0,167,0,0,0,0,0,0,0
+9,,,,,,1.1666666666666667,0.0,0,256,0,0,0,0,0,0,0
+10,,,,,,1.7374999999999998,0.0,0,551,0,0,0,0,0,0,0

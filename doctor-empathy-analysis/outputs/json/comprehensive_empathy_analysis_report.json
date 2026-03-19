@@ -1,0 +1,24 @@
+{
+  "timestamp": "2025-08-11T08:35:03.994134",
+  "traditional_analysis": {
+    "total_cases": 11,
+    "avg_empathy_score": 1.5321363636363636,
+    "avg_empathy_density": 2.4543470491753374,
+    "avg_empathy_intensity": 0.04267966917435996
+  },
+  "machine_learning": {
+    "models_trained": [
+      "RandomForest",
+      "LogisticRegression",
+      "GradientBoosting"
+    ],
+    "best_model": "RandomForest",
+    "best_f1_micro": 0.6972111553784861,
+    "best_f1_macro": 0.6633755749376888
+  },
+  "cross_validation": {
+    "cv_folds": 5,
+    "best_cv_model": "RandomForest",
+    "best_cv_score": 0.698221134230926
+  }
+}

@@ -1,0 +1,1072 @@
+{
+  "analysis_timestamp": "2025-08-11T08:35:03.976607",
+  "total_cases": 11,
+  "empathy_features_config": {
+    "categories": [
+      "感谢信任",
+      "理解共情",
+      "安慰鼓励",
+      "关心体贴",
+      "耐心解释",
+      "支持帮助",
+      "情感回应",
+      "专业关怀"
+    ],
+    "weights": {
+      "感谢信任": 1.2,
+      "理解认同": 1.5,
+      "关心注意": 1.3,
+      "安慰支持": 1.4,
+      "倾听确认": 1.1,
+      "耐心解释": 1.3,
+      "理解共情": 1.5,
+      "安慰鼓励": 1.4,
+      "关心体贴": 1.3,
+      "支持帮助": 1.2,
+      "情感回应": 1.1,
+      "专业关怀": 1.3
+    }
+  },
+  "case_analyses": [
+    {
+      "case_id": 1,
+      "disease": "双侧眼肌长短不一样。",
+      "statistics": {
+        "total_doctor_utterances": 6,
+        "total_patient_utterances": 4,
+        "dialogue_length": 310,
+        "doctor_word_count": 114,
+        "avg_empathy_score": 0.8333333333333334,
+        "avg_empathy_density": 1.4501231527093597,
+        "avg_empathy_intensity": 0.02484126984126984,
+        "max_empathy_score": 3.7,
+        "min_empathy_score": 0,
+        "empathy_variance": 1.868888888888889
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "感谢您的信任，病情资料我已详细阅读。您目前的检查资料不齐全，需要补充以下检查：有既往病史吗？(2020.05.01)",
+          "empathy_score": 3.7,
+          "empathy_density": 6.379310344827586,
+          "empathy_intensity": 0.10571428571428572,
+          "features_found": {
+            "感谢信任": [
+              {
+                "keyword": "感谢",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "感谢您的信任",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "耐心解释": [
+              {
+                "keyword": "详细",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "有近视散光吗？(2020.05.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "甲状腺功能检查，眼外肌MRI做了吗？(2020.05.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 4,
+          "utterance": "外眦韧带(2020.05.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 5,
+          "utterance": "外眦韧带是正常的，只不过有些人比较大(2020.05.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 6,
+          "utterance": "病情摘要/结论：病情摘要及初步印象：双侧眼肌不一致总结建议：建议完善眼肌MRI及甲功检查(2020.05.01)",
+          "empathy_score": 1.3,
+          "empathy_density": 2.3214285714285716,
+          "empathy_intensity": 0.043333333333333335,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 2,
+      "disease": "下眼皮一直跳",
+      "statistics": {
+        "total_doctor_utterances": 3,
+        "total_patient_utterances": 3,
+        "dialogue_length": 284,
+        "doctor_word_count": 129,
+        "avg_empathy_score": 2.1,
+        "avg_empathy_density": 3.6907756813417194,
+        "avg_empathy_intensity": 0.06221624850657109,
+        "max_empathy_score": 3.7,
+        "min_empathy_score": 0,
+        "empathy_variance": 2.4066666666666667
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "感谢您的信任，病情资料我已详细阅读。您目前的检查资料不齐全，需要补充以下检查：既往有眼部病史吗？(2020.05.01)",
+          "empathy_score": 3.7,
+          "empathy_density": 6.166666666666667,
+          "empathy_intensity": 0.10277777777777779,
+          "features_found": {
+            "感谢信任": [
+              {
+                "keyword": "感谢",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "感谢您的信任",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "耐心解释": [
+              {
+                "keyword": "详细",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "19″如果短时间内那个眼皮跳好转了就没事了，如果六个小时以后还有的话，一般我们这里会采取局部的那个呃，封闭疗法，就是说局部打点麻药，麻痹眼外的眼睛肌肉的情况，或者做针灸方面的治疗。以上文字由机器转写，仅供参考(2020.05.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "病情摘要/结论：病情摘要及初步印象：眼轮匝肌痉挛总结建议：注意休息，局部热敷按摩。(2020.05.01)",
+          "empathy_score": 2.6,
+          "empathy_density": 4.905660377358491,
+          "empathy_intensity": 0.08387096774193549,
+          "features_found": {
+            "关心体贴": [
+              {
+                "keyword": "注意休息",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 3,
+      "disease": "小儿白内障",
+      "statistics": {
+        "total_doctor_utterances": 3,
+        "total_patient_utterances": 1,
+        "dialogue_length": 252,
+        "doctor_word_count": 118,
+        "avg_empathy_score": 4.266666666666667,
+        "avg_empathy_density": 7.4304863188213135,
+        "avg_empathy_intensity": 0.1286833855799373,
+        "max_empathy_score": 6.5,
+        "min_empathy_score": 1.3,
+        "empathy_variance": 4.775555555555556
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "感谢您的信任，病情资料我已详细阅读。根据您现有的资料，建议：有其他合并症吗？(2020.04.30)",
+          "empathy_score": 5.0,
+          "empathy_density": 10.0,
+          "empathy_intensity": 0.16666666666666666,
+          "features_found": {
+            "感谢信任": [
+              {
+                "keyword": "感谢",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "感谢您的信任",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "耐心解释": [
+              {
+                "keyword": "详细",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "14″呃，基本上不需要特殊的护理，呃，就是定期到医院检查，看看他那个白内障的那个呃变化情况一般的话，像先天性的话多半变化不是很明显，如果没有并发症的话。以上文字由机器转写，仅供参考(2020.04.30)",
+          "empathy_score": 1.3,
+          "empathy_density": 1.2745098039215685,
+          "empathy_intensity": 0.022413793103448276,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "定期",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "病情摘要/结论：病情摘要及初步印象：先天性白内障总结建议：密切观察小儿的视功能发育，定期复查。(2020.04.30)",
+          "empathy_score": 6.5,
+          "empathy_density": 11.016949152542372,
+          "empathy_intensity": 0.19696969696969696,
+          "features_found": {
+            "关心体贴": [
+              {
+                "keyword": "观察",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "定期复查",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "密切观察",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "定期",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 4,
+      "disease": "眼科",
+      "statistics": {
+        "total_doctor_utterances": 10,
+        "total_patient_utterances": 10,
+        "dialogue_length": 1059,
+        "doctor_word_count": 457,
+        "avg_empathy_score": 2.1759999999999997,
+        "avg_empathy_density": 3.1498945135717538,
+        "avg_empathy_intensity": 0.05376109221016341,
+        "max_empathy_score": 5.3999999999999995,
+        "min_empathy_score": 0,
+        "empathy_variance": 3.437184
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "感谢您的信任，病情资料我已详细阅读。您目前的检查资料不齐全，需要补充以下检查：裸眼视力(2020.04.29)",
+          "empathy_score": 3.7,
+          "empathy_density": 6.7272727272727275,
+          "empathy_intensity": 0.115625,
+          "features_found": {
+            "感谢信任": [
+              {
+                "keyword": "感谢",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "感谢您的信任",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "耐心解释": [
+              {
+                "keyword": "详细",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "21″根据小孩的面光结果以及相关检查小孩应该是有高度近视，如果小孩查视力不配合的话，那只能根据检查的结果跟他佩戴合适的呃镜片，然后定期复查，因为小孩子目前的眼轴也是偏长的。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 2.96,
+          "empathy_density": 2.642857142857143,
+          "empathy_intensity": 0.045538461538461535,
+          "features_found": {
+            "关心体贴": [
+              {
+                "keyword": "定期复查",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "支持帮助": [
+              {
+                "keyword": "配合",
+                "score": 0.36,
+                "intensity_modifier": 1.0,
+                "negation": true
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "定期",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "5″家庭成员中有没有高度近视眼病死了。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 4,
+          "utterance": "21″手术的话，可能只能等成年以后吧，或者说根据他的眼睛的变化，比如说他的眼轴啊，长度啊，不断的增长，也可以在那个未成年前行那个后巩膜加固术，这主要还是根据他的眼睛的不断的那个变化进行相关的调整。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 3.5000000000000004,
+          "empathy_density": 2.8225806451612905,
+          "empathy_intensity": 0.046666666666666676,
+          "features_found": {
+            "耐心解释": [
+              {
+                "keyword": "比如",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "行",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 5,
+          "utterance": "5″高度近视一般呢，遗传的概率都是比较大的。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 6,
+          "utterance": "24″高度近视，有些人就叫做病理性近视，他是跟基因有关系的啊，它随着年龄的增加，他眼球就不断的增长，眼睛不断增长的话就照着镜子度数也不断的增加，所以作后巩膜那个加固术的时候是防止眼球长度增加进一步控制眼睛视力的那个度数增加。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 7,
+          "utterance": "21″现在小孩啊，还小很多情况也是那个有变数的，所以目前的话还是要给他那个带个合适的镜片矫正，然后的话，根据他的那个年龄的增加，随时做相关的检查，然后再进行相关的处理。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 1.1,
+          "empathy_density": 1.0,
+          "empathy_intensity": 0.016176470588235296,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "行",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 8,
+          "utterance": "8″也不要太着急，小孩毕竟还小很多事情呢，慢慢来啊，反正就要一个是要重视啊，好吧。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 5.3999999999999995,
+          "empathy_density": 8.059701492537313,
+          "empathy_intensity": 0.12857142857142856,
+          "features_found": {
+            "安慰鼓励": [
+              {
+                "keyword": "不要太着急",
+                "score": 1.4,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "慢慢来",
+                "score": 1.4,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "关心体贴": [
+              {
+                "keyword": "要重视",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "重视",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 9,
+          "utterance": "1″好不客气。以上文字由机器转写，仅供参考(2020.04.29)",
+          "empathy_score": 1.2,
+          "empathy_density": 3.6363636363636362,
+          "empathy_intensity": 0.06315789473684211,
+          "features_found": {
+            "感谢信任": [
+              {
+                "keyword": "不客气",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 10,
+          "utterance": "病情摘要/结论：病情摘要及初步印象：双眼眼轴明显大于正常值总结建议：高度近视，戴眼镜，定期复查(2020.04.29)",
+          "empathy_score": 3.9000000000000004,
+          "empathy_density": 6.610169491525425,
+          "empathy_intensity": 0.12187500000000001,
+          "features_found": {
+            "关心体贴": [
+              {
+                "keyword": "定期复查",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "定期",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 5,
+      "disease": "眼部疾病",
+      "statistics": {
+        "total_doctor_utterances": 6,
+        "total_patient_utterances": 3,
+        "dialogue_length": 571,
+        "doctor_word_count": 271,
+        "avg_empathy_score": 1.4666666666666668,
+        "avg_empathy_density": 1.2031643293779217,
+        "avg_empathy_intensity": 0.02028247543691853,
+        "max_empathy_score": 3.8,
+        "min_empathy_score": 0,
+        "empathy_variance": 2.342222222222222
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "17″从你那个图片上看呢，这主要考虑是一个结膜眼呃，建议你那个你不是点那个点必舒吗，典必殊可以继续点，然后再加一个阿昔洛韦滴眼液啦，一天点一天六次好不好。以上文字由机器转写，仅供参考(2022.03.24)",
+          "empathy_score": 2.4000000000000004,
+          "empathy_density": 2.330097087378641,
+          "empathy_intensity": 0.03870967741935485,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "祝早日康复！(2022.03.24)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "36″你的图片显示是考虑巩膜炎呃，巩膜炎的话用药的时间比较长一点，然后用药的频率也要多一点点皮肤的话，目前的话建议呃，大概白天吧，用用两个小时用一次好不好，反正睡着勒图那个典必殊眼膏，但是用药期间一定要监测眼压，一旦眼压有问题的话，这个药可能就要停了。然后再用那个点评的同时，建议用一下普拉洛芬或者那个溴芬酸钠两种药水都一起用。以上文字由机器转写，仅供参考(2022.03.31)",
+          "empathy_score": 3.8,
+          "empathy_density": 2.0,
+          "empathy_intensity": 0.033928571428571426,
+          "features_found": {
+            "关心体贴": [
+              {
+                "keyword": "监测",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "支持帮助": [
+              {
+                "keyword": "一起",
+                "score": 1.2,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 4,
+          "utterance": "7″炎症反应，他都会引起呃，那个C反应蛋白的变化的。以上文字由机器转写，仅供参考(2022.03.31)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 5,
+          "utterance": "12″考虑到你全身的情况不好不方便，全身用药，所以局部用药的时间可能要长一点，好了以后也要坚持用一段时间药还要定期到门诊去复诊。以上文字由机器转写，仅供参考(2022.03.31)",
+          "empathy_score": 2.6,
+          "empathy_density": 2.8888888888888893,
+          "empathy_intensity": 0.04905660377358491,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "定期",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              },
+              {
+                "keyword": "坚持",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 6,
+          "utterance": "祝早日康复！(2022.04.01)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        }
+      ]
+    },
+    {
+      "case_id": 6,
+      "disease": "干眼症",
+      "statistics": {
+        "total_doctor_utterances": 2,
+        "total_patient_utterances": 2,
+        "dialogue_length": 203,
+        "doctor_word_count": 68,
+        "avg_empathy_score": 0.9400000000000002,
+        "avg_empathy_density": 1.605844155844156,
+        "avg_empathy_intensity": 0.030354391371340526,
+        "max_empathy_score": 1.4900000000000002,
+        "min_empathy_score": 0.39,
+        "empathy_variance": 0.3025000000000001
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "抗生素不建议长期用(2020.08.23)",
+          "empathy_score": 0.39,
+          "empathy_density": 1.8571428571428572,
+          "empathy_intensity": 0.035454545454545454,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 0.39,
+                "intensity_modifier": 1.0,
+                "negation": true
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "17″佳利杀菌和左氧氟沙星滴眼液都属于那个抗菌素眼药水可以呃，没有感染的话，不建议那个利用阿羌塘甘纳滴眼液是治疗干眼症的那个可以用如果没有防腐剂的话，长期用问题也不大。以上文字由机器转写，仅供参考(2020.08.23)",
+          "empathy_score": 1.4900000000000002,
+          "empathy_density": 1.3545454545454547,
+          "empathy_intensity": 0.025254237288135598,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 0.39,
+                "intensity_modifier": 1.0,
+                "negation": true
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 7,
+      "disease": "上睑下垂",
+      "statistics": {
+        "total_doctor_utterances": 2,
+        "total_patient_utterances": 1,
+        "dialogue_length": 250,
+        "doctor_word_count": 114,
+        "avg_empathy_score": 1.3,
+        "avg_empathy_density": 1.0743801652892562,
+        "avg_empathy_intensity": 0.018055555555555557,
+        "max_empathy_score": 2.6,
+        "min_empathy_score": 0,
+        "empathy_variance": 1.6900000000000002
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "10″根据你所说的一些情况啊，初步考虑还是跟那个重症肌无力有关系，因为他做的性质的事业还是阳性的。以上文字由机器转写，仅供参考(2020.08.14)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "18″是的，因为你的胸部CT做啊，也没什么其他的问题，因为目前只有先用药期好不好呃，手术后期如果半年或者一年以上，如果能改善哦，你可以考虑手术，但是做手术的话，你的眼睛有可能就是说闭不拢吗。以上文字由机器转写，仅供参考(2020.08.15)",
+          "empathy_score": 2.6,
+          "empathy_density": 2.1487603305785123,
+          "empathy_intensity": 0.036111111111111115,
+          "features_found": {
+            "理解共情": [
+              {
+                "keyword": "是的",
+                "score": 1.5,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 8,
+      "disease": "白内障",
+      "statistics": {
+        "total_doctor_utterances": 3,
+        "total_patient_utterances": 2,
+        "dialogue_length": 643,
+        "doctor_word_count": 181,
+        "avg_empathy_score": 0.3666666666666667,
+        "avg_empathy_density": 0.26960784313725494,
+        "avg_empathy_intensity": 0.004214559386973181,
+        "max_empathy_score": 1.1,
+        "min_empathy_score": 0,
+        "empathy_variance": 0.26888888888888896
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "12″像你这种情况手术还是做吧，因为你属于并发性白内障，两个眼睛那个呃，现在做了一个眼睛两个眼睛不太协调的话，对看东西的影响还是很明显的。以上文字由机器转写，仅供参考(2020.08.08)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "19″你的白内障还是做吧，因为你白内障早晚还在做的这个只是暂时解决问题啊，手术风险肯定还是有的嘛，好不好，你做过一个眼睛呢，嗯，反正手术医生谈话了吧，都跟你讲。嗯，我觉得还是要做，因为鼻梁眼睛不协调，不是很舒服，好不好。以上文字由机器转写，仅供参考(2020.08.08)",
+          "empathy_score": 1.1,
+          "empathy_density": 0.8088235294117648,
+          "empathy_intensity": 0.012643678160919542,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "嗯",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "9″因为你长期高度近视可能看近的话，距离应该短一点阿留留个两到300度的近视还是应该的。以上文字由机器转写，仅供参考(2020.08.08)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        }
+      ]
+    },
+    {
+      "case_id": 9,
+      "disease": "眼睛进花露水",
+      "statistics": {
+        "total_doctor_utterances": 3,
+        "total_patient_utterances": 2,
+        "dialogue_length": 167,
+        "doctor_word_count": 55,
+        "avg_empathy_score": 0.5,
+        "avg_empathy_density": 1.0869565217391304,
+        "avg_empathy_intensity": 0.018518518518518517,
+        "max_empathy_score": 1.5,
+        "min_empathy_score": 0,
+        "empathy_variance": 0.5
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "没有什么大问题(2020.05.08)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "图不是很清楚，有可能是刺激后引起的结膜增生组织(2020.05.08)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "如果是结膜组织增生，可能药物消不了，但也没多大影响，确实感不适可手术(2020.05.08)",
+          "empathy_score": 1.5,
+          "empathy_density": 3.260869565217391,
+          "empathy_intensity": 0.05555555555555555,
+          "features_found": {
+            "理解共情": [
+              {
+                "keyword": "确实",
+                "score": 1.5,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 10,
+      "disease": "结膜炎",
+      "statistics": {
+        "total_doctor_utterances": 3,
+        "total_patient_utterances": 3,
+        "dialogue_length": 256,
+        "doctor_word_count": 65,
+        "avg_empathy_score": 1.1666666666666667,
+        "avg_empathy_density": 4.401587301587302,
+        "avg_empathy_intensity": 0.0807487922705314,
+        "max_empathy_score": 1.3,
+        "min_empathy_score": 1.1,
+        "empathy_variance": 0.008888888888888885
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "可以再用几天眼药水(2020.05.06)",
+          "empathy_score": 1.1,
+          "empathy_density": 5.238095238095238,
+          "empathy_intensity": 0.11000000000000001,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "10″好了，就不需要点眼药水啦，呃，平时都可以做做内囊区的按按摩或者按压可以促进他内线的那个排泄。以上文字由机器转写，仅供参考(2020.05.06)",
+          "empathy_score": 1.1,
+          "empathy_density": 1.4666666666666668,
+          "empathy_intensity": 0.02391304347826087,
+          "features_found": {
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "好了再坚持用二天(2020.05.07)",
+          "empathy_score": 1.3,
+          "empathy_density": 6.5,
+          "empathy_intensity": 0.10833333333333334,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "坚持",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": 11,
+      "disease": "复视",
+      "statistics": {
+        "total_doctor_utterances": 4,
+        "total_patient_utterances": 4,
+        "dialogue_length": 551,
+        "doctor_word_count": 232,
+        "avg_empathy_score": 1.7374999999999998,
+        "avg_empathy_density": 1.634997557509548,
+        "avg_empathy_intensity": 0.027800072240180232,
+        "max_empathy_score": 4.35,
+        "min_empathy_score": 0,
+        "empathy_variance": 2.5567187499999995
+      },
+      "utterance_analyses": [
+        {
+          "utterance_id": 1,
+          "utterance": "12″根据你提供的资料左眼呢，可能还存在一定的散光，呃，建议你做个综合验光看看佩戴眼镜以后这种情况会不会改善。以上文字由机器转写，仅供参考(2020.04.30)",
+          "empathy_score": 1.3,
+          "empathy_density": 1.6049382716049383,
+          "empathy_intensity": 0.027083333333333334,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "建议",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 2,
+          "utterance": "10″因为你有散光，呃，最好可能还是要那个散瞳验光这样的话散光的走向啊，那个数据就比较准确。以上文字由机器转写，仅供参考(2020.04.30)",
+          "empathy_score": 1.3,
+          "empathy_density": 1.8055555555555558,
+          "empathy_intensity": 0.03170731707317073,
+          "features_found": {
+            "专业关怀": [
+              {
+                "keyword": "最好",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 3,
+          "utterance": "25″你的睑板腺情况大致还好阿，没有很大的那个问题，平时可以做做热敷，你现在主要的情况就是呃说的有点散光，不知道你术前散光情况怎么样，你说的散光造成你眼睛的视觉障碍呃，如果确实有散光的话，最好还是就是说散光方面可能要调整一下。以上文字由机器转写，仅供参考(2020.04.30)",
+          "empathy_score": 4.35,
+          "empathy_density": 3.1294964028776975,
+          "empathy_intensity": 0.05240963855421686,
+          "features_found": {
+            "理解共情": [
+              {
+                "keyword": "知道",
+                "score": 0.44999999999999996,
+                "intensity_modifier": 1.0,
+                "negation": true
+              },
+              {
+                "keyword": "确实",
+                "score": 1.5,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "情感回应": [
+              {
+                "keyword": "可以",
+                "score": 1.1,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ],
+            "专业关怀": [
+              {
+                "keyword": "最好",
+                "score": 1.3,
+                "intensity_modifier": 1.0,
+                "negation": false
+              }
+            ]
+          }
+        },
+        {
+          "utterance_id": 4,
+          "utterance": "21″从这张图图表的资料上看，呃，你的内膜破裂，时间还是正常的内核高度稍微有点大，就是说内页的含量总量不是很不是很好，稍微有点点小呃，其他数据情况都还好。以上文字由机器转写，仅供参考(2020.04.30)",
+          "empathy_score": 0,
+          "empathy_density": 0.0,
+          "empathy_intensity": 0.0,
+          "features_found": {}
+        }
+      ]
+    }
+  ]
+}
