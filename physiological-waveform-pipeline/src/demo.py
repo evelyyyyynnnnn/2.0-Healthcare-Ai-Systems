@@ -10,7 +10,8 @@ from datetime import datetime, timezone
 import numpy as np
 
 from .synth import make_cohort, FS_DEFAULT
-from .pipeline import build_dataset, score_rejection, reject_reason_histogram
+from .pipeline import (build_dataset, process_segment, reject_reason_histogram,
+                       score_rejection)
 from .loaders import describe_sources
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -73,7 +74,133 @@ def run() -> dict:
     return results
 
 
+def run_real() -> dict:
+    """Process real BIDMC recordings and check beat detection against the monitor.
+
+    This is the first result in the project that an outside device can
+    contradict. The bedside monitor computed a pulse rate from the same
+    plethysmogram, once per second, using its own algorithm. If the pipeline's
+    derived rate disagrees with it, the pipeline is wrong -- there is no
+    generator to blame.
+    """
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT))
+    import numpy as _np
+    from data.load import load_records, to_segments
+
+    from .quality import PPG_LIMITS
+
+    records, prov = load_records(root=ROOT / "data")
+    segments = to_segments(records)
+    # BIDMC's PLETH channel is a plethysmogram in arbitrary units, so the
+    # arterial-pressure plausibility band does not apply to it. Passing the
+    # ABP limits here rejected every window of every recording.
+    limits = PPG_LIMITS
+
+    per_record, errors = [], []
+    for rec, seg in zip(records, segments):
+        rows, quals = process_segment(seg.signal, seg.fs, limits=limits)
+        accepted = [q for q in quals if q.accepted]
+        hrs = [r["heart_rate_bpm"] for r in rows
+               if r.get("heart_rate_bpm") == r.get("heart_rate_bpm")]
+        derived = float(_np.median(hrs)) if hrs else float("nan")
+
+        ref_med, delta = None, None
+        if rec["reference_rate"] is not None:
+            finite = rec["reference_rate"][_np.isfinite(rec["reference_rate"])]
+            if len(finite):
+                ref_med = float(_np.median(finite))
+                if derived == derived:
+                    delta = derived - ref_med
+                    errors.append(delta)
+
+        per_record.append({
+            "record": rec["record"],
+            "duration_s": round(len(seg.signal) / seg.fs, 1),
+            "windows": len(quals),
+            "accepted": len(accepted),
+            "accept_rate": round(len(accepted) / len(quals), 4) if quals else 0.0,
+            "derived_hr_bpm": round(derived, 2) if derived == derived else None,
+            "monitor_hr_bpm": round(ref_med, 2) if ref_med is not None else None,
+            "reference_channel": rec["reference_channel"],
+            "difference_bpm": round(delta, 2) if delta is not None else None,
+        })
+
+    agreement = None
+    if errors:
+        arr = _np.asarray(errors)
+        agreement = {
+            "n_records_compared": int(len(arr)),
+            "median_difference_bpm": round(float(_np.median(arr)), 3),
+            "mean_absolute_difference_bpm": round(float(_np.mean(_np.abs(arr))), 3),
+            "max_absolute_difference_bpm": round(float(_np.max(_np.abs(arr))), 3),
+            "within_5_bpm": int((_np.abs(arr) <= 5).sum()),
+        }
+
+    results = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "is_synthetic": False,
+        "data_source": "PhysioNet BIDMC PPG and Respiration Dataset (open access); "
+                       "see data/MANIFEST.json for file hashes and retrieval times",
+        "provenance": prov,
+        "channel_limits": {"units": limits.units, "lo": limits.lo,
+                           "hi": limits.hi,
+                           "step_limit": "60% of the window's own peak-to-peak"
+                                         if limits.delta_max is None
+                                         else limits.delta_max},
+        "artifact_scoring_reported": False,
+        "artifact_scoring_withheld_because": prov["artifact_scoring_withheld_because"],
+        "pressure_values_suppressed_because":
+            "PLETH is a photoplethysmogram, not an arterial line; a systolic "
+            "pressure in mmHg is not something this signal measures",
+        "per_record": per_record,
+        "beat_detection_vs_monitor": agreement,
+    }
+    (ROOT / "results").mkdir(exist_ok=True)
+    (ROOT / "results" / "latest-real.json").write_text(
+        json.dumps(results, indent=2) + "\n", encoding="utf8")
+    return results
+
+
+def main_real() -> int:
+    from data.datakit import FetchError
+    try:
+        r = run_real()
+    except FetchError as exc:
+        print(f"cannot run on real data: {exc}", file=sys.stderr)
+        return 2
+    pv = r["provenance"]
+    print(f"source: {r['data_source']}")
+    print(f"{pv['n_records']} recordings, channel {pv['channel']} at {pv['fs_hz']} Hz")
+    print(f"\n{'record':<9}{'dur s':>8}{'windows':>9}{'accepted':>10}"
+          f"{'derived':>9}{'monitor':>9}{'diff':>8}")
+    for x in r["per_record"]:
+        d = f"{x['derived_hr_bpm']:.1f}" if x["derived_hr_bpm"] else "-"
+        m = f"{x['monitor_hr_bpm']:.1f}" if x["monitor_hr_bpm"] else "-"
+        df = f"{x['difference_bpm']:+.1f}" if x["difference_bpm"] is not None else "-"
+        print(f"{x['record']:<9}{x['duration_s']:>8.0f}{x['windows']:>9}"
+              f"{x['accepted']:>10}{d:>9}{m:>9}{df:>8}")
+    ag = r["beat_detection_vs_monitor"]
+    if ag:
+        print(f"\nbeat detection vs the bedside monitor, {ag['n_records_compared']} "
+              f"recordings:")
+        print(f"  median difference        {ag['median_difference_bpm']:+.2f} bpm")
+        print(f"  mean absolute difference {ag['mean_absolute_difference_bpm']:.2f} bpm")
+        print(f"  worst record             {ag['max_absolute_difference_bpm']:.2f} bpm")
+        print(f"  within 5 bpm             {ag['within_5_bpm']}/"
+              f"{ag['n_records_compared']}")
+    else:
+        print("\nno monitor reference available in the cached recordings")
+    print("\nartifact scoring is NOT reported: " +
+          r["artifact_scoring_withheld_because"])
+    print(r["pressure_values_suppressed_because"])
+    print("wrote results/latest-real.json")
+    return 0
+
+
 def main() -> int:
+    if "--real" in sys.argv[1:]:
+        return main_real()
     r = run()
     c, d, rj = r["cohort"], r["dataset"], r["rejection"]
     print(f"cohort: {c['n_segments']} segments @ {c['fs_hz']} Hz, "

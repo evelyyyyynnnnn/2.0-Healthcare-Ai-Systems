@@ -20,6 +20,40 @@ import numpy as np
 ABP_MIN, ABP_MAX = 20.0, 220.0
 
 
+@dataclass(frozen=True)
+class ChannelLimits:
+    """Plausibility limits for one kind of waveform.
+
+    These were originally constants, which was fine for as long as the only
+    input was an arterial line. Running the pipeline on a real
+    photoplethysmogram exposed the assumption: PLETH is recorded in arbitrary
+    units centred near zero, so every window fell outside 20-220 "mmHg" and the
+    gate rejected the entire recording. The signal was fine; the units were an
+    assumption nobody had written down.
+
+    delta_max None means the step limit is taken from the window's own
+    peak-to-peak range, which is the only sensible rule for a channel whose
+    amplitude scale is arbitrary.
+    """
+    lo: float
+    hi: float
+    delta_max: float | None
+    units: str = "mmHg"
+    delta_frac: float = 0.6
+
+    def step_limit(self, x) -> float:
+        if self.delta_max is not None:
+            return self.delta_max
+        ptp = float(np.max(x) - np.min(x)) if len(x) else 0.0
+        return max(self.delta_frac * ptp, 1e-9)
+
+
+ABP_LIMITS = ChannelLimits(ABP_MIN, ABP_MAX, 45.0, units="mmHg")
+# A plethysmogram carries no pressure units, so range limits are meaningless
+# and the step limit is relative to the window's own amplitude.
+PPG_LIMITS = ChannelLimits(float("-inf"), float("inf"), None, units="arbitrary")
+
+
 @dataclass
 class WindowQuality:
     start: int
@@ -118,13 +152,21 @@ def pulsatility_sqi(x: np.ndarray, fs: float) -> float:
 def assess_window(x: np.ndarray, fs: float, start: int,
                   sqi_min: float = 0.35, flat_max: float = 0.10,
                   oor_max: float = 0.02, spike_max: int = 3,
-                  delta_max_mmhg: float = 45.0) -> WindowQuality:
+                  delta_max_mmhg: float | None = None,
+                  limits: ChannelLimits = ABP_LIMITS) -> WindowQuality:
+    """Assess one window against the limits for its channel.
+
+    `delta_max_mmhg` still overrides the step limit, so the threshold sweep in
+    the demo works unchanged; when it is None the limit comes from `limits`.
+    """
     reasons = []
     sqi = pulsatility_sqi(x, fs)
     flat = flat_fraction(x)
-    oor = out_of_range_fraction(x)
+    oor = out_of_range_fraction(x, lo=limits.lo, hi=limits.hi)
     spikes = spike_count(x)
     dmax = float(np.max(np.abs(np.diff(x)))) if len(x) > 1 else 0.0
+    step_limit = (delta_max_mmhg if delta_max_mmhg is not None
+                  else limits.step_limit(x))
 
     if sqi < sqi_min:
         reasons.append(("low_pulsatility",
@@ -134,12 +176,14 @@ def assess_window(x: np.ndarray, fs: float, start: int,
                         f"flat for {flat:.0%} of the window"))
     if oor > oor_max:
         reasons.append(("out_of_range",
-                        f"{oor:.1%} outside {ABP_MIN:.0f}-{ABP_MAX:.0f} mmHg"))
+                        f"{oor:.1%} outside {limits.lo:.0f}-{limits.hi:.0f} "
+                        f"{limits.units}"))
     if spikes > spike_max:
         reasons.append(("spikes", f"{spikes} narrow transients"))
-    if dmax > delta_max_mmhg:
+    if dmax > step_limit:
         reasons.append(("step_change",
-                        f"max jump {dmax:.0f} mmHg between samples"))
+                        f"max jump {dmax:.3g} {limits.units} between samples "
+                        f"(limit {step_limit:.3g})"))
 
     return WindowQuality(
         start=start, end=start + len(x), sqi=sqi, flat_frac=flat,

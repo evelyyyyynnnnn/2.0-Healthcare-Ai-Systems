@@ -202,7 +202,106 @@ def run() -> dict:
     return results
 
 
+def leakage_experiment_real(root):
+    """The same comparison, on real patients instead of constructed ones.
+
+    The synthetic version guarantees inflation by construction. This one does
+    not: whether a real patient's physiological baseline is memorable enough to
+    inflate a row-split score is an empirical question, and the answer is
+    whatever it is. Reporting it either way is the point.
+    """
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT))
+    from data.load import load_xy
+
+    X, y, subj, stay_ids, names, prov = load_xy(root=root)
+    rng = np.random.default_rng(0)
+
+    m = rng.permutation(len(X)) < int(0.7 * len(X))
+    mdl = HistGradientBoostingClassifier(max_iter=120, random_state=0).fit(X[m], y[m])
+    leaked = auroc(y[~m], mdl.predict_proba(X[~m])[:, 1])
+
+    sp = split_by_subject(subj, test_frac=0.3, seed=0)
+    assert_no_subject_leak(subj, sp.train, sp.test)
+    mdl2 = HistGradientBoostingClassifier(max_iter=120, random_state=0).fit(
+        X[sp.train], y[sp.train])
+    honest = auroc(y[sp.test], mdl2.predict_proba(X[sp.test])[:, 1])
+
+    # A patient readmitted to the ICU has two stay_ids and one baseline.
+    readmitted = len(np.unique(stay_ids)) - len(np.unique(subj))
+
+    return {
+        "row_split_auroc": round(leaked, 4),
+        "subject_split_auroc": round(honest, 4),
+        "inflation": round(leaked - honest, 4),
+        "inflation_pct": round(100.0 * (leaked - honest) / honest, 2)
+                         if honest else None,
+        "n_subjects": prov["n_subjects"],
+        "n_stays": prov["n_stays_used"],
+        "n_readmissions": int(readmitted),
+        "n_rows": prov["n_rows"],
+        "positive_rate": prov["positive_rate"],
+        "provenance": prov,
+    }
+
+
+def run_real() -> dict:
+    from data.load import ROOT as DATA_ROOT
+
+    lk = leakage_experiment_real(DATA_ROOT)
+    results = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "is_synthetic": False,
+        "data_source": "PhysioNet MIMIC-IV clinical database demo (open access); "
+                       "see data/MANIFEST.json for file hashes and retrieval times",
+        "cohort_is_a_demonstration_not_a_study": True,
+        "sample_size_caveat":
+            "about 100 ICU stays. The direction of the leakage effect is "
+            "meaningful; its magnitude, from a cohort this small, is not a "
+            "population estimate.",
+        "package": {"name": "icuflow", "version": icuflow.__version__,
+                    "exports": len(icuflow.__all__), "published": False},
+        "leakage": lk,
+        "guards": guard_experiment(),
+        "cli": cli_check(),
+    }
+    (ROOT / "results").mkdir(exist_ok=True)
+    (ROOT / "results" / "latest-real.json").write_text(
+        json.dumps(results, indent=2) + "\n", encoding="utf8")
+    return results
+
+
+def main_real() -> int:
+    from data.datakit import FetchError
+    try:
+        r = run_real()
+    except FetchError as exc:
+        print(f"cannot run on real data: {exc}", file=sys.stderr)
+        return 2
+    lk = r["leakage"]
+    pv = lk["provenance"]
+    print(f"source: {r['data_source']}")
+    print(f"{lk['n_subjects']} patients across {lk['n_stays']} ICU stays "
+          f"({lk['n_readmissions']} readmissions), {lk['n_rows']:,} rows")
+    print(f"target: {pv['event_definition']} within {pv['horizon_hours']:.0f} h "
+          f"(positive rate {lk['positive_rate']:.2%})")
+    print(f"grouping key: {pv['grouping_key']}")
+    print(f"\n  random row split   AUROC {lk['row_split_auroc']:.4f}")
+    print(f"  subject split      AUROC {lk['subject_split_auroc']:.4f}")
+    if lk["inflation"] > 0:
+        print(f"  inflation          {lk['inflation']:+.4f} "
+              f"({lk['inflation_pct']:+.1f}%) -- row splitting flatters the model")
+    else:
+        print(f"  difference         {lk['inflation']:+.4f} -- no inflation "
+              f"measured on this cohort, which is a finding, not a failure")
+    print("\n" + r["sample_size_caveat"])
+    print("wrote results/latest-real.json")
+    return 0
+
+
 def main() -> int:
+    if "--real" in sys.argv[1:]:
+        return main_real()
     r = run()
     lk = r["leakage"]
     print(f"icuflow {r['package']['version']}, {r['package']['exports']} exports")
