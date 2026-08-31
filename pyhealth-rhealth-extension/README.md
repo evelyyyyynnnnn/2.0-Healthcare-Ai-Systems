@@ -1,68 +1,96 @@
-# PyHealth / RHealth Extension
+# icuflow
 
-> **Status: scaffold.** Structure only — no method, data or result is claimed
-> yet. Every "not yet measured" below is a real gap, not a placeholder to be
-> filled in with an estimate.
+> An installable package for the three parts of a clinical prediction pipeline that are easiest to get wrong: subject-grouped splits, calibration, and alarm comparison at matched sensitivity.
 
-**Repository:** `2.0-Healthcare-Ai-Systems`
-**NIW pillar (Dhanasar prong 1):** Healthcare Safety
-**Evidence value:** CORE — makes an adoption claim checkable
+**Repository:** `2.0-Healthcare-Ai-Systems` &middot; **Pillar:** Healthcare Safety
 
-## Core idea
+## Status
 
-A PyHealth / RHealth extension released as a pip package.
+This is working code with a runnable demo and 0 tests. It is **not** a
+finished result.
 
-## Why it earns its place
+The package is real and installable from this repository, but it is NOT published to PyPI, so it has no download statistics and no users. The experiments below run on synthetic subjects designed to exhibit the specific failure each module prevents.
 
-Makes the "adopted by multiple external research groups" claim checkable via registry download statistics.
+Last run: `2026-08-31T18:29:31+00:00`
 
-## The petition claim it supports
+## Quick start
 
-> Open-source tools including PyHealth / RHealth extensions used by multiple external research groups.
-
-**What the portfolio shows today:** No PyHealth or RHealth extension exists in any of the five repositories. The named open-source contribution is absent.
-
-**Action required:** Publish the extension as a pip package; download counts then become real adoption evidence. Cite only adoption you can document with names and dates.
-
-No prior work in the portfolio — this starts from scratch.
-
-## Petition-grade checklist
-
-A project counts as petition-grade only when all five are true. None are yet.
-
-- [ ] Original work, authored here
-- [ ] A stated method (`docs/METHOD.md`)
-- [ ] Real data at a stated scale (`docs/DATA.md` — target: Public registry download statistics)
-- [ ] A measured result (`results/README.md`)
-- [ ] A README a reviewer can follow, start to finish
-
-## Measured results
-
-Target scale: **Public registry download statistics**
-
-| Metric | Baseline | Result | Out-of-sample |
-|---|---|---|---|
-| PyPI downloads (documented, never inflated) | _not yet measured_ | _not yet measured_ | _pending_ |
-| Named institutional users with dated correspondence | _not yet measured_ | _not yet measured_ | _pending_ |
-| Upstream issues / PRs referencing the package | _not yet measured_ | _not yet measured_ | _pending_ |
-
-Populate this from `results/`. Do not cite any number in the petition that does
-not appear here with a run date behind it.
+```bash
+pip install -r requirements.txt
+python -m pytest tests/ -q     # 0 tests
+python -m src.demo             # runs everything, rewrites results/ and website/
+```
 
 ## Layout
 
 ```
-pyhealth-rhealth-extension/
-├── README.md        this file
-├── docs/
-│   ├── METHOD.md    what the method is and why it is non-obvious
-│   ├── DATA.md      source, scale, licence, and how to reproduce the pull
-│   └── EVIDENCE.md  the petition claim, the gap, and the exhibit it becomes
-├── src/             implementation
-├── data/            pointers and manifests — never raw licensed data
-├── results/         measured results, run logs, and the baseline comparison
-└── tests/           tests that establish the result is reproducible
+README.md
+data/
+  |-- README.md
+  |-- manifests/
+  |-- sample/
+docs/
+  |-- DATA.md
+  |-- EVIDENCE.md
+  |-- METHOD.md
+icuflow/
+  |-- __init__.py
+  |-- alarms.py
+  |-- calibration.py
+  |-- cli.py
+  |-- splits.py
+  |-- tasks.py
+icuflow.egg-info/
+  |-- PKG-INFO
+  |-- SOURCES.txt
+  |-- dependency_links.txt
+  |-- entry_points.txt
+  |-- requires.txt
+  |-- top_level.txt
+pyproject.toml
+requirements.txt
+results/
+  |-- README.md
+  |-- latest.json
+src/
+  |-- .gitkeep
+  |-- __init__.py
+  |-- demo.py
+  |-- site.py
+  |-- sitekit.py
+tests/
+  |-- .gitkeep
+  |-- test_icuflow.py
+website/
+  |-- README.md
+  |-- index.html
 ```
 
----
-Scaffold generated from `NIW_Project_Portfolio_and_Gap_Plan.xlsx` (sheets: Repo Build-Out Plan, Core Ideas at a Glance, NIW Claim vs Repo Evidence, Notion 创业 Alignment). Structure only — no results are claimed here yet.
+- `src/` &mdash; the implementation.
+- `tests/` &mdash; pytest suite. These guard behaviour, not just imports.
+- `results/latest.json` &mdash; the output of the last demo run. Every figure quoted
+  anywhere in this project traces back to this file.
+- `website/` &mdash; a self-contained static site, deployable to Vercel by copying the
+  folder into its own repository. See `website/README.md`.
+
+## The website
+
+`website/` has no build step. To deploy it independently:
+
+```bash
+cp -r website/ ../my-pyhealth-rhealth-extension-site && cd ../my-pyhealth-rhealth-extension-site
+git init && git add -A && git commit -m "site"
+vercel deploy --prod
+```
+
+The page is regenerated from `results.json` on every `python -m src.demo`, so the
+figures on the site and the figures the code produces cannot drift apart. Do not edit
+numbers on the page by hand.
+
+## Honesty note
+
+Everything in this project runs on clearly-labelled synthetic or authored data.
+Swap in the real source and the same pipeline reports real numbers &mdash; that is
+what the structure is for. Until that happens, nothing here should be cited as a
+measured result, and the site's closing section states explicitly what the project
+does not establish.

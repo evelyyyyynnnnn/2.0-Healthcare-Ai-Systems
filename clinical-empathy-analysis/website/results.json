@@ -1,0 +1,320 @@
+{
+  "generated_at": "2026-08-31T18:32:12+00:00",
+  "is_synthetic": true,
+  "data_source": "16 authored bilingual transcripts with analyst empathy ratings",
+  "corpus": {
+    "n_transcripts": 16,
+    "n_english": 10,
+    "n_mandarin": 6,
+    "n_turns": 76,
+    "rating_mean": 2.438,
+    "rating_sd": 1.21,
+    "rating_min": 0.5,
+    "rating_max": 4.0
+  },
+  "lexicon": {
+    "categories": [
+      "acknowledgement",
+      "validation",
+      "exploration",
+      "partnership",
+      "warmth",
+      "dismissal"
+    ],
+    "n_cues": 73,
+    "per_category": {
+      "acknowledgement": 14,
+      "validation": 14,
+      "exploration": 12,
+      "partnership": 11,
+      "warmth": 9,
+      "dismissal": 13
+    },
+    "validation_problems": []
+  },
+  "evaluation": {
+    "n": 16,
+    "ridge": 1.0,
+    "lexicon_only": {
+      "name": "lexicon score alone",
+      "n": 16,
+      "pearson_r": 0.8934,
+      "spearman_rho": 0.7853,
+      "mae": 9.0849
+    },
+    "model_loo": {
+      "name": "ridge over all features (LOO)",
+      "n": 16,
+      "pearson_r": 0.9463,
+      "spearman_rho": 0.9324,
+      "mae": 0.3518
+    },
+    "by_language": [
+      {
+        "name": "English",
+        "n": 10,
+        "pearson_r": 0.9717,
+        "spearman_rho": 0.9394,
+        "mae": 0.3076
+      },
+      {
+        "name": "Mandarin",
+        "n": 6,
+        "pearson_r": 0.9701,
+        "spearman_rho": 1.0,
+        "mae": 0.4255
+      }
+    ],
+    "predictions": [
+      {
+        "tid": "EN-01",
+        "language": "en",
+        "rating": 4.0,
+        "lexicon_score": 19.412,
+        "predicted": 4.546,
+        "error": 0.546
+      },
+      {
+        "tid": "EN-02",
+        "language": "en",
+        "rating": 0.5,
+        "lexicon_score": -15.185,
+        "predicted": -0.13,
+        "error": -0.63
+      },
+      {
+        "tid": "EN-03",
+        "language": "en",
+        "rating": 2.5,
+        "lexicon_score": 14.0,
+        "predicted": 2.535,
+        "error": 0.035
+      },
+      {
+        "tid": "EN-04",
+        "language": "en",
+        "rating": 3.5,
+        "lexicon_score": 11.136,
+        "predicted": 3.782,
+        "error": 0.282
+      },
+      {
+        "tid": "EN-05",
+        "language": "en",
+        "rating": 1.0,
+        "lexicon_score": -7.826,
+        "predicted": 1.182,
+        "error": 0.182
+      },
+      {
+        "tid": "EN-06",
+        "language": "en",
+        "rating": 3.0,
+        "lexicon_score": 12.5,
+        "predicted": 3.031,
+        "error": 0.031
+      },
+      {
+        "tid": "EN-07",
+        "language": "en",
+        "rating": 2.0,
+        "lexicon_score": 15.0,
+        "predicted": 2.093,
+        "error": 0.093
+      },
+      {
+        "tid": "EN-08",
+        "language": "en",
+        "rating": 4.0,
+        "lexicon_score": 16.122,
+        "predicted": 3.693,
+        "error": -0.307
+      },
+      {
+        "tid": "ZH-01",
+        "language": "zh",
+        "rating": 4.0,
+        "lexicon_score": 13.611,
+        "predicted": 3.572,
+        "error": -0.428
+      },
+      {
+        "tid": "ZH-02",
+        "language": "zh",
+        "rating": 0.5,
+        "lexicon_score": -7.222,
+        "predicted": 1.151,
+        "error": 0.651
+      },
+      {
+        "tid": "ZH-03",
+        "language": "zh",
+        "rating": 3.5,
+        "lexicon_score": 13.061,
+        "predicted": 3.063,
+        "error": -0.437
+      },
+      {
+        "tid": "ZH-04",
+        "language": "zh",
+        "rating": 2.0,
+        "lexicon_score": 4.706,
+        "predicted": 1.56,
+        "error": -0.44
+      },
+      {
+        "tid": "ZH-05",
+        "language": "zh",
+        "rating": 1.0,
+        "lexicon_score": -2.609,
+        "predicted": 1.451,
+        "error": 0.451
+      },
+      {
+        "tid": "ZH-06",
+        "language": "zh",
+        "rating": 3.0,
+        "lexicon_score": 8.298,
+        "predicted": 2.854,
+        "error": -0.146
+      },
+      {
+        "tid": "EN-09",
+        "language": "en",
+        "rating": 1.5,
+        "lexicon_score": -5.385,
+        "predicted": 0.888,
+        "error": -0.612
+      },
+      {
+        "tid": "EN-10",
+        "language": "en",
+        "rating": 3.0,
+        "lexicon_score": 9.286,
+        "predicted": 2.644,
+        "error": -0.356
+      }
+    ]
+  },
+  "manner_vs_topic": {
+    "pair": [
+      "EN-09",
+      "EN-10"
+    ],
+    "ratings": [
+      1.5,
+      3.0
+    ],
+    "lexicon_scores": [
+      -5.385,
+      9.286
+    ],
+    "separated": true,
+    "gap": 14.67
+  },
+  "ablation": {
+    "groups": [
+      {
+        "features": "all features",
+        "n_features": 20,
+        "pearson_r": 0.9463,
+        "mae": 0.3518
+      },
+      {
+        "features": "lexicon only",
+        "n_features": 7,
+        "pearson_r": 0.9241,
+        "mae": 0.4041
+      },
+      {
+        "features": "structure only",
+        "n_features": 7,
+        "pearson_r": 0.6906,
+        "mae": 0.7997
+      },
+      {
+        "features": "no dismissal cues",
+        "n_features": 18,
+        "pearson_r": 0.9335,
+        "mae": 0.4072
+      }
+    ]
+  },
+  "worked_example": {
+    "tid": "EN-01",
+    "rating": 4.0,
+    "cues": [
+      {
+        "category": "acknowledgement",
+        "cue": "that sounds",
+        "count": 1,
+        "weight": 1.0,
+        "contribution": 1.0
+      },
+      {
+        "category": "acknowledgement",
+        "cue": "it makes sense",
+        "count": 1,
+        "weight": 1.0,
+        "contribution": 1.0
+      },
+      {
+        "category": "validation",
+        "cue": "frightening",
+        "count": 1,
+        "weight": 1.0,
+        "contribution": 1.0
+      },
+      {
+        "category": "exploration",
+        "cue": "tell me more",
+        "count": 1,
+        "weight": 1.0,
+        "contribution": 1.0
+      },
+      {
+        "category": "exploration",
+        "cue": "what worries",
+        "count": 1,
+        "weight": 1.0,
+        "contribution": 1.0
+      },
+      {
+        "category": "acknowledgement",
+        "cue": "i can see",
+        "count": 1,
+        "weight": 0.9,
+        "contribution": 0.9
+      },
+      {
+        "category": "validation",
+        "cue": "worrying",
+        "count": 1,
+        "weight": 0.9,
+        "contribution": 0.9
+      },
+      {
+        "category": "partnership",
+        "cue": "does that make sense",
+        "count": 1,
+        "weight": 0.9,
+        "contribution": 0.9
+      },
+      {
+        "category": "partnership",
+        "cue": "we can",
+        "count": 1,
+        "weight": 0.8,
+        "contribution": 0.8
+      },
+      {
+        "category": "partnership",
+        "cue": "together",
+        "count": 1,
+        "weight": 0.8,
+        "contribution": 0.8
+      }
+    ],
+    "lexicon_score": 19.412
+  }
+}

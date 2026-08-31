@@ -1,0 +1,5 @@
+numpy>=1.24
+pytest>=7.0
+# Optional: reading MIMIC-IV / PhysioNet records needs wfdb.
+# The data itself is credentialed and is not bundled here.
+# wfdb>=4.1

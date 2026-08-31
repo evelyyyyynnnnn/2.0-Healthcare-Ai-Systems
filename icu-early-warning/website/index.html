@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ICU Early-Warning Models</title>
+<meta name="description" content="Hypoxemia and hypotension prediction with calibration, uncertainty, and a false-alert comparison made at matched sensitivity against the alarm a ward actually uses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#FCFCFD; --surface:#FFFFFF; --surface-2:#F4F5F8;
+  --ink:#16191F; --ink-2:#40474F; --muted:#6C7480;
+  --line:#E2E5EA; --line-2:#EFF1F4;
+  --accent:#1D5B70; --accent-2:#E6F0F3;
+  --ok:#2C6B4F; --ok-bg:#E5F1EA;
+  --warn:#8A6212; --warn-bg:#F7EFDC;
+  --demo:#6E4B8F; --demo-bg:#F0EAF6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+    --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+    --line:#282F38; --line-2:#20262E;
+    --accent:#72B3CB; --accent-2:#18272E;
+    --ok:#7BC09F; --ok-bg:#15251E;
+    --warn:#D8AD5E; --warn-bg:#292216;
+    --demo:#B79AD6; --demo-bg:#241C2E;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+  --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+  --line:#282F38; --line-2:#20262E;
+  --accent:#72B3CB; --accent-2:#18272E;
+  --ok:#7BC09F; --ok-bg:#15251E;
+  --warn:#D8AD5E; --warn-bg:#292216;
+  --demo:#B79AD6; --demo-bg:#241C2E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+    "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 88px}
+h1,h2,h3{font-family:Spectral,Georgia,"Songti SC",serif;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;letter-spacing:-.015em;line-height:1.14}
+h2{font-size:clamp(20px,2.5vw,25px);font-weight:600;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.stack{display:flex;flex-direction:column;gap:14px}
+.stack-lg{display:flex;flex-direction:column;gap:22px}
+section{margin-top:52px}
+
+header.mast{border-bottom:1px solid var(--line);padding:44px 0 26px;margin-bottom:8px;
+  display:flex;flex-direction:column;gap:15px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:4px;background:var(--surface-2);
+  color:var(--muted);font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.demo{background:var(--demo-bg);color:var(--demo)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+
+.banner{display:flex;gap:13px;align-items:flex-start;background:var(--demo-bg);
+  border-radius:9px;padding:15px 18px;margin-top:26px}
+.banner .bi{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--demo);flex:none;padding-top:3px;font-weight:600}
+.banner p{font-size:14.2px;color:var(--ink-2)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.metric{background:var(--surface);padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.metric .mk{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);line-height:1.35}
+.metric .mv{font-family:Spectral,Georgia,serif;font-size:26px;font-weight:600;
+  font-variant-numeric:tabular-nums;line-height:1.1;color:var(--accent)}
+.metric .mn{font-size:12.4px;color:var(--muted);line-height:1.4}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:520px}
+th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;padding:11px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;line-height:1.5}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+tr:last-child td{border-bottom:0}
+
+pre{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:15px 17px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;
+  font-size:12.8px;line-height:1.62;color:var(--ink-2)}
+ul.tight{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:7px}
+ul.tight li::marker{color:var(--muted)}
+.note{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:9px}
+figure{margin:0}
+svg.chart{display:block;width:100%;height:auto}
+@media (max-width:600px){.wrap{padding:0 17px 68px}.banner{flex-direction:column;gap:7px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
+  <h1>ICU Early-Warning Models</h1>
+  <p class="lede">Hypoxemia and hypotension prediction with calibration, uncertainty, and a false-alert comparison made at matched sensitivity against the alarm a ward actually uses.</p>
+  <div class="tags"><span class="tag ">4-hour horizon</span><span class="tag ">patient-level split</span><span class="tag ">isotonic calibration</span><span class="tag ">ensemble uncertainty</span><span class="tag demo">synthetic cohort</span></div>
+</header>
+<div class="banner">
+  <span class="bi">Data</span>
+  <p>This run used a synthetic ICU cohort generated by src/cohort.py. It is not patient data and carries no clinical meaning. Events are driven by a latent process the model cannot fully observe, so achievable performance is bounded well below 1.0 by construction — a synthetic cohort a model scores 0.99 on would teach you nothing. MIMIC-IV and eICU are credentialed and are not bundled here.</p>
+</div>
+
+<section>
+  <h2>The question the label encodes</h2>
+  <div class="stack">
+    <p>Not "is this patient deteriorating now" &mdash; a monitor answers that and needs
+    no model. The label here is <strong>will this patient deteriorate in the next four
+    hours</strong>, and rows where the event has already started are dropped, because
+    predicting an event in progress is not early warning.</p>
+    <p>Splitting is by patient, never by observation. Two windows from one patient share
+    a baseline and a latent trajectory, so a random row split leaks the patient across
+    train and test and inflates every number on this page. That single choice moves
+    results more than any model change here.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Cohort</h2>
+  <div class="stack-lg">
+    <div class="metrics"><div class="metric"><span class="mk">Patients</span><span class="mv">400</span><span class="mn">19,200 patient-hours</span></div><div class="metric"><span class="mk">Observations</span><span class="mv">38,400</span><span class="mn">30-minute resolution</span></div><div class="metric"><span class="mk">Hypoxemia</span><span class="mv">716</span><span class="mn">1.86% of observations</span></div><div class="metric"><span class="mk">Hypotension</span><span class="mv">931</span><span class="mn">2.42% of observations</span></div></div>
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated 2026-08-31T18:25:19+00:00 &middot;
+      31 features &middot; mean age 63.2
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Hypoxemia — 4-hour horizon</h2>
+  <div class="stack-lg">
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      train 280 patients / 23,060 rows &middot;
+      test 120 patients / 9,897 rows &middot;
+      test event rate 11.50%
+    </p>
+    <div class="tw"><table><thead><tr><th>Model</th><th>AUROC</th><th>AUPRC</th><th>Brier</th><th>ECE</th><th>False alerts /100 obs</th></tr></thead><tbody><tr><td>single-threshold alarm</td><td class="n">0.637</td><td class="n">0.218</td><td class="n">0.1657</td><td class="n">0.2182</td><td class="n">60.34</td></tr><tr><td>logistic</td><td class="n">0.688</td><td class="n">0.266</td><td class="n">0.0948</td><td class="n">0.0117</td><td class="n">53.66</td></tr><tr><td>gradient boosting</td><td class="n">0.678</td><td class="n">0.249</td><td class="n">0.0961</td><td class="n">0.0204</td><td class="n">56.85</td></tr><tr><td>gradient boosting + isotonic</td><td class="n">0.678</td><td class="n">0.249</td><td class="n">0.0956</td><td class="n">0.0095</td><td class="n">56.58</td></tr></tbody></table></div>
+
+    <h3>Calibration is where the model wins</h3>
+    <figure><svg class="chart" viewBox="0 0 680 149" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">single-threshold alarm</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.2182</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">logistic</text><rect x="190" y="44" width="22.5" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="221.5" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0117</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">gradient boosting</text><rect x="190" y="79" width="39.5" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="238.5" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0204</text><text x="180" y="131.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">gradient boosting + isotonic</text><rect x="190" y="114" width="18.5" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="217.5" y="131.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0095</text></svg></figure>
+    <p>Expected calibration error, lower is better. The ward alarm's score is not a
+    probability at all &mdash; it is a normalised vital &mdash; so its ECE of
+    0.218 is expected. The point is the gap: after
+    isotonic calibration the model's stated risk is within
+    0.010 of the observed frequency, which is what makes a number like
+    "18% risk in the next four hours" safe to put in front of a clinician.</p>
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">1.00</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.75</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.50</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.25</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.00</text><path d="M46.0,180.0 L666.0,12.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">perfect</text><path d="M88.8,167.7 L131.0,152.3 L198.8,136.2 L260.7,121.5 L320.7,110.5 L363.8,96.0 L461.0,12.0" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="40" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">observed</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">predicted probability</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">observed frequency</text></svg></figure>
+
+    <h3>False alerts, compared honestly</h3>
+    <div class="tw"><table><thead><tr><th></th><th>Ward alarm</th><th>Calibrated model</th><th>Change</th></tr></thead><tbody><tr><td>Sensitivity (matched)</td><td class="n">0.800</td><td class="n">0.803</td><td>matched by construction</td></tr><tr><td>False alerts</td><td class="n">5,972</td><td class="n">5,600</td><td>6.2% fewer</td></tr><tr><td>Per 100 observations</td><td class="n">60.34</td><td class="n">56.58</td><td></td></tr></tbody></table></div>
+    <div class="note">
+      <h3>Why matched sensitivity</h3>
+      <p>Both systems are set to the same 80% sensitivity
+      before their false alerts are counted. Comparing alarm burden at different
+      sensitivities is the most common way to make an alerting result look better than
+      it is: any system can cut false alerts by catching fewer events.</p>
+      <p>The reduction here is <strong>6.2%</strong> on
+      synthetic data. That is the honest analogue of a false-alarm-reduction claim, and
+      it is a good deal smaller than the figures usually quoted for this kind of system.</p>
+    </div>
+
+    <h3>Does the uncertainty estimate earn its place?</h3>
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.68</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.64</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.61</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.57</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.53</text><path d="M666.0,12.0 L542.0,68.6 L418.0,99.8 L294.0,155.0 L170.0,174.8 L46.0,180.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">AUROC</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">fraction of cases kept (rest deferred to a human)</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">AUROC</text></svg></figure>
+    <div class="note">
+      <h3>A negative result</h3>
+      <p>The chart shows AUROC when the model defers its least-certain cases to a human.
+      A useful uncertainty estimate would make AUROC <em>rise</em> as uncertain cases are
+      removed. It falls &mdash; from 0.680 keeping everything to
+      0.533 keeping only the most confident half.</p>
+      <p>The ensemble spread is not identifying cases the model gets wrong. It is
+      identifying cases with low predicted probability, where members agree because
+      the answer is easy and the event rate is low. Brier improves across the same
+      sweep for exactly that reason, which is why Brier alone would have hidden this.</p>
+      <p>So the uncertainty estimate is reported and is <strong>not</strong> recommended
+      for triage in its current form. Conformal prediction, which gives coverage
+      guarantees rather than a spread, is the obvious next thing to try.</p>
+    </div>
+  </div>
+</section>
+
+
+<section>
+  <h2>Hypotension — 4-hour horizon</h2>
+  <div class="stack-lg">
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      train 280 patients / 22,914 rows &middot;
+      test 120 patients / 9,840 rows &middot;
+      test event rate 13.13%
+    </p>
+    <div class="tw"><table><thead><tr><th>Model</th><th>AUROC</th><th>AUPRC</th><th>Brier</th><th>ECE</th><th>False alerts /100 obs</th></tr></thead><tbody><tr><td>single-threshold alarm</td><td class="n">0.665</td><td class="n">0.292</td><td class="n">0.2161</td><td class="n">0.3082</td><td class="n">54.22</td></tr><tr><td>logistic</td><td class="n">0.713</td><td class="n">0.336</td><td class="n">0.1027</td><td class="n">0.0055</td><td class="n">49.32</td></tr><tr><td>gradient boosting</td><td class="n">0.700</td><td class="n">0.312</td><td class="n">0.1041</td><td class="n">0.0119</td><td class="n">51.38</td></tr><tr><td>gradient boosting + isotonic</td><td class="n">0.704</td><td class="n">0.304</td><td class="n">0.1042</td><td class="n">0.0121</td><td class="n">49.48</td></tr></tbody></table></div>
+
+    <h3>Calibration is where the model wins</h3>
+    <figure><svg class="chart" viewBox="0 0 680 149" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">single-threshold alarm</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.3082</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">logistic</text><rect x="190" y="44" width="7.5" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="206.5" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0055</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">gradient boosting</text><rect x="190" y="79" width="16.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="215.3" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0119</text><text x="180" y="131.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">gradient boosting + isotonic</text><rect x="190" y="114" width="16.6" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="215.6" y="131.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.0121</text></svg></figure>
+    <p>Expected calibration error, lower is better. The ward alarm's score is not a
+    probability at all &mdash; it is a normalised vital &mdash; so its ECE of
+    0.308 is expected. The point is the gap: after
+    isotonic calibration the model's stated risk is within
+    0.012 of the observed frequency, which is what makes a number like
+    "18% risk in the next four hours" safe to put in front of a clinician.</p>
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">1.00</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.75</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.50</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.25</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.00</text><path d="M46.0,180.0 L666.0,12.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">perfect</text><path d="M94.3,167.9 L129.1,158.6 L198.5,130.1 L259.0,115.7 L318.8,110.4 L381.5,81.2 L457.6,40.0" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="40" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">observed</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">predicted probability</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">observed frequency</text></svg></figure>
+
+    <h3>False alerts, compared honestly</h3>
+    <div class="tw"><table><thead><tr><th></th><th>Ward alarm</th><th>Calibrated model</th><th>Change</th></tr></thead><tbody><tr><td>Sensitivity (matched)</td><td class="n">0.799</td><td class="n">0.800</td><td>matched by construction</td></tr><tr><td>False alerts</td><td class="n">5,335</td><td class="n">4,869</td><td>8.7% fewer</td></tr><tr><td>Per 100 observations</td><td class="n">54.22</td><td class="n">49.48</td><td></td></tr></tbody></table></div>
+    <div class="note">
+      <h3>Why matched sensitivity</h3>
+      <p>Both systems are set to the same 80% sensitivity
+      before their false alerts are counted. Comparing alarm burden at different
+      sensitivities is the most common way to make an alerting result look better than
+      it is: any system can cut false alerts by catching fewer events.</p>
+      <p>The reduction here is <strong>8.7%</strong> on
+      synthetic data. That is the honest analogue of a false-alarm-reduction claim, and
+      it is a good deal smaller than the figures usually quoted for this kind of system.</p>
+    </div>
+
+    <h3>Does the uncertainty estimate earn its place?</h3>
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.71</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.67</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.64</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.61</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.57</text><path d="M666.0,12.0 L542.0,67.0 L418.0,104.7 L294.0,125.1 L170.0,151.9 L46.0,180.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">AUROC</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">fraction of cases kept (rest deferred to a human)</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">AUROC</text></svg></figure>
+    <div class="note">
+      <h3>A negative result</h3>
+      <p>The chart shows AUROC when the model defers its least-certain cases to a human.
+      A useful uncertainty estimate would make AUROC <em>rise</em> as uncertain cases are
+      removed. It falls &mdash; from 0.708 keeping everything to
+      0.574 keeping only the most confident half.</p>
+      <p>The ensemble spread is not identifying cases the model gets wrong. It is
+      identifying cases with low predicted probability, where members agree because
+      the answer is easy and the event rate is low. Brier improves across the same
+      sweep for exactly that reason, which is why Brier alone would have hidden this.</p>
+      <p>So the uncertainty estimate is reported and is <strong>not</strong> recommended
+      for triage in its current form. Conformal prediction, which gives coverage
+      guarantees rather than a spread, is the obvious next thing to try.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Reproduce it</h2>
+  <div class="stack">
+    <pre>cd icu-early-warning
+pip install -r requirements.txt
+python -m pytest tests/ -q
+python -m src.demo</pre>
+    <p>To run it on MIMIC-IV or eICU, replace <code>src/cohort.py</code> with a loader
+    returning the same <code>Patient</code> shape. Nothing else changes.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What this does not establish</h2>
+  <div class="stack">
+    <ul class="tight">
+      <li>The cohort is synthetic. Every number here describes a generator, not a
+      hospital, and none of it transfers to MIMIC-IV or eICU without being re-run.</li>
+      <li>AUROC near 0.70 is what this generator permits, because events are driven by
+      a latent the features only partly observe. It is neither a good nor a bad
+      clinical result &mdash; it is not a clinical result at all.</li>
+      <li>No external validation, no prospective evaluation, no site transfer.</li>
+      <li>Alert fatigue is modelled as a count of false alerts. Real alarm burden
+      depends on timing, clustering and who is in the room.</li>
+      <li>The uncertainty estimate does not support selective prediction here, as
+      shown above. It should not be used for triage.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="foot">
+  <p>2.0-Healthcare-Ai-Systems &middot; icu-early-warning &middot; part of a five-repository portfolio on optimization-driven,
+     system-level decision frameworks.</p>
+  <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
+     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+</div>
+</div>
+</body>
+</html>
