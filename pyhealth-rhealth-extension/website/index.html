@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>icuflow</title>
+<meta name="description" content="An installable package for the three parts of a clinical prediction pipeline that are easiest to get wrong: subject-grouped splits, calibration, and alarm comparison at matched sensitivity.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#FCFCFD; --surface:#FFFFFF; --surface-2:#F4F5F8;
+  --ink:#16191F; --ink-2:#40474F; --muted:#6C7480;
+  --line:#E2E5EA; --line-2:#EFF1F4;
+  --accent:#1D5B70; --accent-2:#E6F0F3;
+  --ok:#2C6B4F; --ok-bg:#E5F1EA;
+  --warn:#8A6212; --warn-bg:#F7EFDC;
+  --demo:#6E4B8F; --demo-bg:#F0EAF6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+    --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+    --line:#282F38; --line-2:#20262E;
+    --accent:#72B3CB; --accent-2:#18272E;
+    --ok:#7BC09F; --ok-bg:#15251E;
+    --warn:#D8AD5E; --warn-bg:#292216;
+    --demo:#B79AD6; --demo-bg:#241C2E;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+  --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+  --line:#282F38; --line-2:#20262E;
+  --accent:#72B3CB; --accent-2:#18272E;
+  --ok:#7BC09F; --ok-bg:#15251E;
+  --warn:#D8AD5E; --warn-bg:#292216;
+  --demo:#B79AD6; --demo-bg:#241C2E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+    "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 88px}
+h1,h2,h3{font-family:Spectral,Georgia,"Songti SC",serif;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;letter-spacing:-.015em;line-height:1.14}
+h2{font-size:clamp(20px,2.5vw,25px);font-weight:600;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.stack{display:flex;flex-direction:column;gap:14px}
+.stack-lg{display:flex;flex-direction:column;gap:22px}
+section{margin-top:52px}
+
+header.mast{border-bottom:1px solid var(--line);padding:44px 0 26px;margin-bottom:8px;
+  display:flex;flex-direction:column;gap:15px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:4px;background:var(--surface-2);
+  color:var(--muted);font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.demo{background:var(--demo-bg);color:var(--demo)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+
+.banner{display:flex;gap:13px;align-items:flex-start;background:var(--demo-bg);
+  border-radius:9px;padding:15px 18px;margin-top:26px}
+.banner .bi{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--demo);flex:none;padding-top:3px;font-weight:600}
+.banner p{font-size:14.2px;color:var(--ink-2)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.metric{background:var(--surface);padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.metric .mk{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);line-height:1.35}
+.metric .mv{font-family:Spectral,Georgia,serif;font-size:26px;font-weight:600;
+  font-variant-numeric:tabular-nums;line-height:1.1;color:var(--accent)}
+.metric .mn{font-size:12.4px;color:var(--muted);line-height:1.4}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:520px}
+th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;padding:11px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;line-height:1.5}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+tr:last-child td{border-bottom:0}
+
+pre{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:15px 17px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;
+  font-size:12.8px;line-height:1.62;color:var(--ink-2)}
+ul.tight{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:7px}
+ul.tight li::marker{color:var(--muted)}
+.note{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:9px}
+figure{margin:0}
+svg.chart{display:block;width:100%;height:auto}
+@media (max-width:600px){.wrap{padding:0 17px 68px}.banner{flex-direction:column;gap:7px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
+  <h1>icuflow</h1>
+  <p class="lede">An installable package for the three parts of a clinical prediction pipeline that are easiest to get wrong: subject-grouped splits, calibration, and alarm comparison at matched sensitivity.</p>
+  <div class="tags"><span class="tag ">pip-installable</span><span class="tag ">PyHealth-compatible shape</span><span class="tag ">CLI</span><span class="tag warn">not yet published</span></div>
+</header>
+<div class="banner">
+  <span class="bi">Data</span>
+  <p>The package is real and installable from this repository, but it is NOT published to PyPI, so it has no download statistics and no users. The experiments below run on synthetic subjects designed to exhibit the specific failure each module prevents.</p>
+</div>
+
+<section>
+  <h2>Why these three</h2>
+  <div class="stack">
+    <p>They are the parts of a clinical prediction pipeline that get
+    re-implemented in every project and get quietly wrong in most of them. The
+    functions take and return plain arrays, so they drop into an existing PyHealth
+    or RHealth task without adopting another framework.</p>
+  </div>
+</section>
+
+<section>
+  <h2>This run</h2>
+  <div class="stack-lg">
+    <div class="metrics"><div class="metric"><span class="mk">Leakage inflation</span><span class="mv">+23.1%</span><span class="mn">AUROC from splitting rows not subjects</span></div><div class="metric"><span class="mk">ECE reduction</span><span class="mv">37%</span><span class="mn">on an overconfident score</span></div><div class="metric"><span class="mk">False alerts</span><span class="mv">−4.3%</span><span class="mn">at matched 80% sensitivity</span></div><div class="metric"><span class="mk">Public API</span><span class="mv">14</span><span class="mn">functions and classes</span></div></div>
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated 2026-08-31T18:29:31+00:00 &middot;
+      icuflow 0.1.0 &middot;
+      200 subjects, 16,000 rows
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Subject leakage, measured</h2>
+  <div class="stack-lg">
+    <figure><svg class="chart" viewBox="0 0 680 79" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">random row split</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.6870</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">subject-grouped split</text><rect x="190" y="44" width="342.9" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="541.9" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.5583</text></svg></figure>
+    <div class="tw"><table><thead><tr><th>Split strategy</th><th>Test AUROC</th><th>What it means</th></tr></thead><tbody><tr><td>Random row split</td><td class="n">0.6870</td><td>The same subjects appear in train and test</td></tr><tr><td>Subject-grouped split</td><td class="n">0.5583</td><td>Every test subject is unseen</td></tr><tr><td>Difference</td><td class="n">+0.1287</td><td>23.1% of the honest score, invented by the split</td></tr></tbody></table></div>
+    <div class="note">
+      <h3>The first version of this experiment showed no leakage at all</h3>
+      <p>Giving each subject an offset that shifted both a feature and the label
+      produced identical scores under both splits. That is correct behaviour: the
+      offset-to-label relationship is real and <em>generalises</em>, so a model
+      learning it does just as well on unseen subjects. Row-splitting looked harmless.</p>
+      <p>Leakage needs a subject effect that does not generalise. Here each subject
+      carries a random label propensity unrelated to anything predictive, plus a
+      near-noise-free fingerprint feature that identifies them. A model trained on rows
+      memorises fingerprint → propensity and scores well on held-out rows from subjects
+      it has already seen; on held-out subjects the fingerprints are new and the
+      memorised mapping is worth nothing.</p>
+      <p>That is the structure of a patient baseline in ICU data, and it is why
+      row-splitting inflates published clinical results.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Calibration, including when not to use it</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Score</th><th>Raw ECE</th><th>Isotonic</th><th>Platt</th><th>AUROC before → after</th></tr></thead><tbody><tr><td>already well calibrated (boosted trees, log loss)</td><td class="n">0.07144</td><td class="n">0.14079</td><td class="n">0.13196</td><td>0.632 → 0.635</td></tr><tr><td>overconfident (monotone distortion, same ranking)</td><td class="n">0.22481</td><td class="n">0.14079</td><td class="n">0.13773</td><td>0.632 → 0.635</td></tr></tbody></table></div>
+    <div class="note">
+      <h3>Both rows are here on purpose</h3>
+      <p>Boosted trees trained on log loss come out close to calibrated already, and on
+      those, calibration is a no-op that adds variance &mdash; ECE goes from
+      0.071 to 0.141, i.e. slightly
+      <em>worse</em>. The module earns its place on scores that are not probabilities:
+      a margin, a rank, an overconfident output. On the distorted score, ECE drops from
+      0.225 to 0.141.</p>
+      <p>AUROC is unchanged in both rows, which is the check that the calibrators are
+      monotone: calibration must move probabilities without reordering patients.
+      Publishing only the flattering row would misrepresent when to reach for this.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Alarm comparison</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th></th><th>Ward baseline</th><th>Model</th><th>Change</th></tr></thead><tbody><tr><td>Sensitivity</td><td class="n">0.800</td><td class="n">0.800</td><td>matched by construction</td></tr><tr><td>False alerts</td><td class="n">2,342</td><td class="n">2,241</td><td>4.3% fewer</td></tr></tbody></table></div>
+    <p>Both systems are driven to the same sensitivity before false alerts are counted.
+    Any alerting system can cut false alarms by catching fewer events, so a comparison
+    made at each system's own convenient operating point is not a comparison.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Guards</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Guard</th><th>Fired correctly</th></tr></thead><tbody><tr><td>Subject appearing in both splits raises SubjectLeakError</td><td>yes</td></tr><tr><td>Row with an event already active is dropped</td><td>yes</td></tr><tr><td>Row without full follow-up is dropped</td><td>yes</td></tr></tbody></table></div>
+    <p>These are assertions a pipeline can call, not conventions someone has to
+    remember. <code>assert_no_subject_leak</code> is meant to sit in a test.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Install and use</h2>
+  <div class="stack">
+    <pre>pip install -e .            # from this directory
+
+python -c "
+import numpy as np, icuflow
+sp = icuflow.split_by_subject(subject_ids, test_frac=0.3, seed=0)
+icuflow.assert_no_subject_leak(subject_ids, sp.train, sp.test)
+"
+
+icuflow check-split predictions.csv --subject-col subject_id
+icuflow score predictions.csv --label-col y --score-col p --baseline-col news2</pre>
+  </div>
+</section>
+
+<section>
+  <h2>What this does not establish</h2>
+  <div class="stack">
+    <ul class="tight">
+      <li><strong>Not published.</strong> The package is installable from this
+      repository and is not on PyPI. It has no downloads, no registry statistics
+      and no users, and nothing here should be described as adopted.</li>
+      <li>Compatibility with PyHealth and RHealth is at the level of data shapes:
+      plain arrays in, plain arrays out. It has not been tested against either
+      framework's task API.</li>
+      <li>Every experiment above runs on synthetic subjects constructed to exhibit
+      the specific failure each module prevents. That demonstrates the module works
+      on the problem it was built for; it is not evidence about real cohorts.</li>
+      <li>The calibrators are small hand-written implementations, not
+      scikit-learn's. They are here so the package has no heavy dependency, and
+      they have not been benchmarked against it.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="foot">
+  <p>2.0-Healthcare-Ai-Systems &middot; pyhealth-rhealth-extension &middot; part of a five-repository portfolio on optimization-driven,
+     system-level decision frameworks.</p>
+  <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
+     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+</div>
+</div>
+</body>
+</html>
