@@ -108,7 +108,100 @@ def run() -> dict:
     return results
 
 
+def run_real() -> dict:
+    """Train and calibrate on real MIMIC-IV ICU stays.
+
+    The cohort is roughly 100 stays, so the discrimination figures below are a
+    demonstration that the pipeline runs on genuine clinical records -- not an
+    estimate anyone should act on. They are reported without confidence
+    intervals for that reason: an interval computed from 100 patients would
+    lend the number an authority it does not have.
+    """
+    import sys as _sys
+    _sys.path.insert(0, str(ROOT))
+    from data.load import load_cohort
+
+    patients, prov = load_cohort(root=ROOT / "data")
+    stats = cohort_stats(patients)
+
+    events = {}
+    for e in EVENTS:
+        try:
+            events[e] = evaluate_event(patients, e)
+        except (ValueError, IndexError) as exc:
+            # With ~100 stays an event can be too rare to split by patient and
+            # still leave positives on both sides. Saying so beats a number
+            # computed from three events.
+            events[e] = {"unavailable": f"{type(exc).__name__}: {exc}",
+                         "reason": "too few events in the demo cohort to train "
+                                   "and evaluate with a patient-grouped split"}
+
+    results = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "is_synthetic": False,
+        "data_source": "PhysioNet MIMIC-IV clinical database demo (open access); "
+                       "see data/MANIFEST.json for file hashes and retrieval times",
+        "cohort_is_a_demonstration_not_a_study": True,
+        "sample_size_caveat":
+            "about 100 ICU stays. Enough to show the pipeline parses real "
+            "charting, resamples irregular observations onto a regular grid "
+            "without looking forward, and produces calibrated risk. Not enough "
+            "to estimate discrimination for clinical use.",
+        "provenance": prov,
+        "cohort": stats,
+        "n_features": len(FEATURE_NAMES),
+        "target_sensitivity": TARGET_SENS,
+        "events": events,
+    }
+    (ROOT / "results").mkdir(exist_ok=True)
+    (ROOT / "results" / "latest-real.json").write_text(
+        json.dumps(results, indent=2) + "\n", encoding="utf8")
+    return results
+
+
+def main_real() -> int:
+    from data.datakit import FetchError
+    try:
+        r = run_real()
+    except FetchError as exc:
+        print(f"cannot run on real data: {exc}", file=sys.stderr)
+        return 2
+    c, pv = r["cohort"], r["provenance"]
+    print(f"source: {r['data_source']}")
+    print(f"built {pv['n_patients_built']} patients from "
+          f"{pv['n_stays_in_file']} ICU stays "
+          f"(skipped {pv['skipped']['too_short']} too short, "
+          f"{pv['skipped']['no_vitals']} without usable vitals)")
+    print(f"grid {pv['grid_step_hours']} h, last value carried forward at most "
+          f"{pv['carry_forward_limit_hours']} h")
+    for k, v in pv["event_definitions"].items():
+        print(f"  {k}: {v}")
+    print(f"\ncohort: {c['n_patients']} patients, {c['n_observations']:,} "
+          f"observations, {c['patient_hours']:,.0f} patient-hours")
+    for e in EVENTS:
+        print(f"  {e}: {c[f'{e}_events']} events ({c[f'{e}_rate']:.2%} of "
+              f"observations, {c[f'{e}_patients_affected']} patients)")
+
+    for ev, d in r["events"].items():
+        print(f"\n=== {ev} ===")
+        if "unavailable" in d:
+            print(f"  not evaluated: {d['reason']}")
+            continue
+        print(f"train {d['n_train_patients']} patients / {d['n_train_rows']:,} rows, "
+              f"test {d['n_test_patients']} / {d['n_test_rows']:,} rows, "
+              f"event rate {d['test_event_rate']:.2%}")
+        print(f"{'model':<32}{'AUROC':>8}{'AUPRC':>8}{'Brier':>9}{'ECE':>8}")
+        for name, m in d["models"].items():
+            print(f"{name:<32}{m['auroc']:>8.3f}{m['auprc']:>8.3f}"
+                  f"{m['brier']:>9.4f}{m['ece']:>8.4f}")
+    print("\n" + r["sample_size_caveat"])
+    print("wrote results/latest-real.json")
+    return 0
+
+
 def main() -> int:
+    if "--real" in sys.argv[1:]:
+        return main_real()
     r = run()
     c = r["cohort"]
     print(f"cohort: {c['n_patients']} patients, {c['n_observations']:,} observations, "
