@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clinical Empathy Analysis</title>
+<meta name="description" content="Measuring empathic behaviour in bilingual consultation transcripts by fusing a theory-grounded weighted lexicon with structural features of the conversation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#FCFCFD; --surface:#FFFFFF; --surface-2:#F4F5F8;
+  --ink:#16191F; --ink-2:#40474F; --muted:#6C7480;
+  --line:#E2E5EA; --line-2:#EFF1F4;
+  --accent:#1D5B70; --accent-2:#E6F0F3;
+  --ok:#2C6B4F; --ok-bg:#E5F1EA;
+  --warn:#8A6212; --warn-bg:#F7EFDC;
+  --demo:#6E4B8F; --demo-bg:#F0EAF6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+    --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+    --line:#282F38; --line-2:#20262E;
+    --accent:#72B3CB; --accent-2:#18272E;
+    --ok:#7BC09F; --ok-bg:#15251E;
+    --warn:#D8AD5E; --warn-bg:#292216;
+    --demo:#B79AD6; --demo-bg:#241C2E;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+  --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+  --line:#282F38; --line-2:#20262E;
+  --accent:#72B3CB; --accent-2:#18272E;
+  --ok:#7BC09F; --ok-bg:#15251E;
+  --warn:#D8AD5E; --warn-bg:#292216;
+  --demo:#B79AD6; --demo-bg:#241C2E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+    "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 88px}
+h1,h2,h3{font-family:Spectral,Georgia,"Songti SC",serif;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;letter-spacing:-.015em;line-height:1.14}
+h2{font-size:clamp(20px,2.5vw,25px);font-weight:600;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.stack{display:flex;flex-direction:column;gap:14px}
+.stack-lg{display:flex;flex-direction:column;gap:22px}
+section{margin-top:52px}
+
+header.mast{border-bottom:1px solid var(--line);padding:44px 0 26px;margin-bottom:8px;
+  display:flex;flex-direction:column;gap:15px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:4px;background:var(--surface-2);
+  color:var(--muted);font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.demo{background:var(--demo-bg);color:var(--demo)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+
+.banner{display:flex;gap:13px;align-items:flex-start;background:var(--demo-bg);
+  border-radius:9px;padding:15px 18px;margin-top:26px}
+.banner .bi{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--demo);flex:none;padding-top:3px;font-weight:600}
+.banner p{font-size:14.2px;color:var(--ink-2)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.metric{background:var(--surface);padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.metric .mk{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);line-height:1.35}
+.metric .mv{font-family:Spectral,Georgia,serif;font-size:26px;font-weight:600;
+  font-variant-numeric:tabular-nums;line-height:1.1;color:var(--accent)}
+.metric .mn{font-size:12.4px;color:var(--muted);line-height:1.4}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:520px}
+th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;padding:11px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;line-height:1.5}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+tr:last-child td{border-bottom:0}
+
+pre{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:15px 17px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;
+  font-size:12.8px;line-height:1.62;color:var(--ink-2)}
+ul.tight{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:7px}
+ul.tight li::marker{color:var(--muted)}
+.note{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:9px}
+figure{margin:0}
+svg.chart{display:block;width:100%;height:auto}
+@media (max-width:600px){.wrap{padding:0 17px 68px}.banner{flex-direction:column;gap:7px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
+  <h1>Clinical Empathy Analysis</h1>
+  <p class="lede">Measuring empathic behaviour in bilingual consultation transcripts by fusing a theory-grounded weighted lexicon with structural features of the conversation.</p>
+  <div class="tags"><span class="tag ">EN + 中文</span><span class="tag ">73 weighted cues</span><span class="tag ">leave-one-out</span><span class="tag demo">authored corpus</span><span class="tag warn">circular validation</span></div>
+</header>
+<div class="banner">
+  <span class="bi">Data</span>
+  <p>The correlation on this page is CIRCULAR and must not be read as validity. The same person wrote the transcripts and the lexicon, so the transcripts contain the cues the lexicon looks for. What is demonstrated is that the pipeline is internally consistent and that the evaluation protocol is sound — not that the measure tracks clinical empathy.</p>
+</div>
+
+<section>
+  <h2>What is being measured</h2>
+  <div class="stack">
+    <p>Not "nice words". Clinical empathy research measures specific behaviours, and the
+    lexicon is organised by the behaviour each cue signals, following the structure of
+    established consultation-coding schemes — the Empathic Communication Coding System
+    and the socio-emotional categories of the Roter Interaction Analysis System.</p>
+    <p>Scores are length-normalised per 100 tokens. A long consultation accumulates cue
+    hits simply by being long, so an unnormalised count measures duration.</p>
+  </div>
+</section>
+
+<section>
+  <h2>This run</h2>
+  <div class="stack-lg">
+    <div class="metrics"><div class="metric"><span class="mk">Transcripts</span><span class="mv">16</span><span class="mn">10 EN / 6 中文, 76 turns</span></div><div class="metric"><span class="mk">Lexicon cues</span><span class="mv">73</span><span class="mn">6 categories</span></div><div class="metric"><span class="mk">LOO correlation</span><span class="mv">+0.946</span><span class="mn">circular — see the banner</span></div><div class="metric"><span class="mk">Mean abs. error</span><span class="mv">0.35</span><span class="mn">on a 0–4 rating scale</span></div></div>
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated 2026-08-31T18:32:12+00:00 &middot;
+      ratings 0.5–4.0, mean 2.438
+      (sd 1.21) &middot;
+      0 lexicon structural problems
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>The lexicon</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Category</th><th>Cues</th><th>Behaviour it indexes</th></tr></thead><tbody><tr><td>acknowledgement</td><td class="n">14</td><td>Naming or reflecting the patient&#x27;s emotion back to them</td></tr><tr><td>validation</td><td class="n">14</td><td>Explicit emotional support; normalising the experience</td></tr><tr><td>exploration</td><td class="n">12</td><td>Inviting the patient to say more — the strongest behavioural signal</td></tr><tr><td>partnership</td><td class="n">11</td><td>Shared decision-making; checking understanding</td></tr><tr><td>warmth</td><td class="n">9</td><td>Weak individually, real in aggregate</td></tr><tr><td>dismissal</td><td class="n">13</td><td>Negative weights. Without these, a curt consultation scores as neutral</td></tr></tbody></table></div>
+    <div class="note">
+      <h3>Why dismissal carries negative weight</h3>
+      <p>Empathy is not only the presence of warmth. A lexicon with no negative
+      category scores a curt, blame-shifting consultation as merely neutral, which is
+      exactly the case a quality measure needs to catch. Removing the dismissal cues
+      drops the correlation from +0.946 to
+      +0.933.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Agreement with the ratings</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Predictor</th><th>n</th><th>Pearson r</th><th>Spearman ρ</th><th>MAE</th></tr></thead><tbody><tr><td>lexicon score alone</td><td class="n">16</td><td class="n">+0.893</td><td class="n">+0.785</td><td class="n">9.085</td></tr><tr><td>ridge over all features (LOO)</td><td class="n">16</td><td class="n">+0.946</td><td class="n">+0.932</td><td class="n">0.352</td></tr><tr><td>English subset</td><td class="n">10</td><td class="n">+0.972</td><td class="n">+0.939</td><td class="n">0.308</td></tr><tr><td>Mandarin subset</td><td class="n">6</td><td class="n">+0.970</td><td class="n">+1.000</td><td class="n">0.425</td></tr></tbody></table></div>
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">4.55</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">3.38</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">2.21</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">1.04</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">-0.13</text><path d="M46.0,175.3 L666.0,31.6" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">ideal</text><path d="M123.5,180.0 L123.5,134.0 L201.0,132.9 L201.0,123.2 L278.5,143.4 L356.0,119.3 L356.0,100.1 L433.5,84.3 L511.0,80.3 L511.0,72.8 L511.0,66.4 L588.5,65.3 L588.5,39.4 L666.0,47.0 L666.0,42.6 L666.0,12.0" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="40" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">predicted</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">analyst rating (0–4)</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">predicted</text></svg></figure>
+    <div class="note warn" style="background:var(--warn-bg);border-color:transparent">
+      <h3>This correlation is circular</h3>
+      <p>One person wrote the transcripts, the ratings <em>and</em> the lexicon. The
+      transcripts therefore contain the cues the lexicon looks for, and the ratings
+      reflect the same intuitions that set the weights. A correlation of
+      +0.946 under these conditions measures internal
+      consistency, not validity.</p>
+      <p>What the number does establish is narrower and still worth having: the
+      pipeline runs end to end, the evaluation protocol is honest (leave-one-out, no
+      fold reuse), and the features separate the cases they were designed to separate.
+      Validity requires a collected corpus with ratings from clinicians who did not
+      build the measure — and inter-rater agreement reported alongside.</p>
+    </div>
+    <div class="tw"><table><thead><tr><th>ID</th><th>Lang</th><th>Rating</th><th>Lexicon score</th><th>Predicted</th><th>Error</th></tr></thead><tbody><tr><td>EN-01</td><td>en</td><td class="n">4.0</td><td class="n">19.41</td><td class="n">4.55</td><td class="n">+0.55</td></tr><tr><td>EN-02</td><td>en</td><td class="n">0.5</td><td class="n">-15.19</td><td class="n">-0.13</td><td class="n">-0.63</td></tr><tr><td>EN-03</td><td>en</td><td class="n">2.5</td><td class="n">14.00</td><td class="n">2.54</td><td class="n">+0.04</td></tr><tr><td>EN-04</td><td>en</td><td class="n">3.5</td><td class="n">11.14</td><td class="n">3.78</td><td class="n">+0.28</td></tr><tr><td>EN-05</td><td>en</td><td class="n">1.0</td><td class="n">-7.83</td><td class="n">1.18</td><td class="n">+0.18</td></tr><tr><td>EN-06</td><td>en</td><td class="n">3.0</td><td class="n">12.50</td><td class="n">3.03</td><td class="n">+0.03</td></tr><tr><td>EN-07</td><td>en</td><td class="n">2.0</td><td class="n">15.00</td><td class="n">2.09</td><td class="n">+0.09</td></tr><tr><td>EN-08</td><td>en</td><td class="n">4.0</td><td class="n">16.12</td><td class="n">3.69</td><td class="n">-0.31</td></tr><tr><td>ZH-01</td><td>zh</td><td class="n">4.0</td><td class="n">13.61</td><td class="n">3.57</td><td class="n">-0.43</td></tr><tr><td>ZH-02</td><td>zh</td><td class="n">0.5</td><td class="n">-7.22</td><td class="n">1.15</td><td class="n">+0.65</td></tr><tr><td>ZH-03</td><td>zh</td><td class="n">3.5</td><td class="n">13.06</td><td class="n">3.06</td><td class="n">-0.44</td></tr><tr><td>ZH-04</td><td>zh</td><td class="n">2.0</td><td class="n">4.71</td><td class="n">1.56</td><td class="n">-0.44</td></tr><tr><td>ZH-05</td><td>zh</td><td class="n">1.0</td><td class="n">-2.61</td><td class="n">1.45</td><td class="n">+0.45</td></tr><tr><td>ZH-06</td><td>zh</td><td class="n">3.0</td><td class="n">8.30</td><td class="n">2.85</td><td class="n">-0.15</td></tr><tr><td>EN-09</td><td>en</td><td class="n">1.5</td><td class="n">-5.38</td><td class="n">0.89</td><td class="n">-0.61</td></tr><tr><td>EN-10</td><td>en</td><td class="n">3.0</td><td class="n">9.29</td><td class="n">2.64</td><td class="n">-0.36</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Manner or topic?</h2>
+  <div class="stack-lg">
+    <p>EN-09 and EN-10 carry identical clinical content — a patient worried about test
+    results, a doctor explaining a routine follow-up — and differ only in delivery. A
+    measure that scores them the same is tracking subject matter, not empathy.</p>
+    <div class="tw"><table><thead><tr><th>Transcript</th><th>Analyst rating</th><th>Lexicon score</th></tr></thead><tbody><tr><td>EN-09</td><td class="n">1.5</td><td class="n">-5.38</td></tr><tr><td>EN-10</td><td class="n">3.0</td><td class="n">9.29</td></tr></tbody></table></div>
+    <p>Separated by +14.67 points in the intended direction. This is the most
+    diagnostic pair in the corpus and the one worth reproducing first on real data.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Which features carry it</h2>
+  <div class="stack-lg">
+    <figure><svg class="chart" viewBox="0 0 680 149" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">all features</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.946</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">lexicon only</text><rect x="190" y="44" width="412.1" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="611.1" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.924</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">structure only</text><rect x="190" y="79" width="308.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="507.0" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.691</text><text x="180" y="131.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">no dismissal cues</text><rect x="190" y="114" width="416.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="615.3" y="131.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.933</text></svg></figure>
+    <div class="tw"><table><thead><tr><th>Feature set</th><th>Features</th><th>Pearson r</th><th>MAE</th></tr></thead><tbody><tr><td>all features</td><td class="n">20</td><td class="n">+0.946</td><td class="n">0.352</td></tr><tr><td>lexicon only</td><td class="n">7</td><td class="n">+0.924</td><td class="n">0.404</td></tr><tr><td>structure only</td><td class="n">7</td><td class="n">+0.691</td><td class="n">0.800</td></tr><tr><td>no dismissal cues</td><td class="n">18</td><td class="n">+0.933</td><td class="n">0.407</td></tr></tbody></table></div>
+    <p>Structural features alone — who talks, how much, how many open questions —
+    reach +0.691
+    without reading a single word of content. That is a useful result in its own right,
+    because structural features survive translation and transcription error far better
+    than lexical ones.</p>
+  </div>
+</section>
+
+<section>
+  <h2>A scored transcript</h2>
+  <div class="stack-lg">
+    <p>EN-01, rated 4.0, lexicon score
+    19.41. Every score decomposes into the cues that produced it,
+    so a clinician can disagree with a specific line rather than with a number.</p>
+    <div class="tw"><table><thead><tr><th>Cue</th><th>Category</th><th>Count</th><th>Weight</th><th>Contribution</th></tr></thead><tbody><tr><td>that sounds</td><td>acknowledgement</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>it makes sense</td><td>acknowledgement</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>frightening</td><td>validation</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>tell me more</td><td>exploration</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>what worries</td><td>exploration</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>i can see</td><td>acknowledgement</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>worrying</td><td>validation</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>does that make sense</td><td>partnership</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>we can</td><td>partnership</td><td class="n">1</td><td class="n">0.8</td><td class="n">0.8</td></tr><tr><td>together</td><td>partnership</td><td class="n">1</td><td class="n">0.8</td><td class="n">0.8</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Reproduce it</h2>
+  <div class="stack">
+    <pre>cd clinical-empathy-analysis
+pip install -r requirements.txt
+python -m pytest tests/ -q
+python -m src.demo</pre>
+  </div>
+</section>
+
+<section>
+  <h2>What this does not establish</h2>
+  <div class="stack">
+    <ul class="tight">
+      <li><strong>No validity evidence.</strong> The correlation is circular, as set out
+      above. Nothing here shows the measure tracks clinical empathy.</li>
+      <li>Sixteen authored transcripts is not a corpus. Leave-one-out on sixteen items
+      has error bars wide enough to contain most values you might care about.</li>
+      <li>No inter-rater agreement, because there is one rater.</li>
+      <li>No patient outcome is attached to any transcript, so nothing here speaks to
+      whether the measured behaviour helps anyone.</li>
+      <li>The Mandarin cues are a smaller set than the English ones and were written by
+      the same person; the near-identical cross-language correlation reflects that
+      symmetry in authoring, not demonstrated cross-lingual validity.</li>
+    </ul>
+    <p>The predecessor project trained on data synthesised at runtime and evaluated on
+    the same generator. This replaces that with a held-out protocol and an explicit
+    statement of what is still missing. The remaining gap is a real corpus.</p>
+  </div>
+</section>
+
+<div class="foot">
+  <p>2.0-Healthcare-Ai-Systems &middot; clinical-empathy-analysis &middot; part of a five-repository portfolio on optimization-driven,
+     system-level decision frameworks.</p>
+  <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
+     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+</div>
+</div>
+</body>
+</html>
