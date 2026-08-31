@@ -1,0 +1,96 @@
+# 2.0 — Healthcare AI Systems
+
+Clinical decision-support and patient-safety systems. This repository carries the Healthcare Safety pillar of the endeavor.
+
+Part of a five-repository portfolio supporting the endeavor described in the
+EB2-NIW petition: **optimization-driven, system-level decision frameworks** —
+integrating operations research, mathematical optimization and applied AI — for
+domains where a wrong decision carries systemic consequences. The three pillars
+are financial stability, healthcare safety and secure digital infrastructure.
+
+| | |
+|---|---|
+| Petition-grade projects today | 1 petition-grade project (empathy analysis, synthetic training data) |
+| Verdict | **Needs 3 more — the thinnest repo against the strongest claims** |
+
+> "Petition-grade" means: original work, a stated method, real data at a stated
+> scale, a measured result, and a README a reviewer can follow. Counts exclude
+> duplicates, forks of third-party work, retired projects, and asset-only
+> folders.
+
+## Projects
+
+| Folder | Project | Pillar | Evidence value |
+|---|---|---|---|
+| [`icu-early-warning/`](icu-early-warning/) | ICU Early-Warning Models | Healthcare Safety | CORE — highest priority in this repo |
+| [`pyhealth-rhealth-extension/`](pyhealth-rhealth-extension/) | PyHealth / RHealth Extension | Healthcare Safety | CORE — makes an adoption claim checkable |
+| [`physiological-waveform-pipeline/`](physiological-waveform-pipeline/) | Physiological Waveform Pipeline | Healthcare Safety | Supporting — supplies the input layer for the ICU models |
+| [`clinical-empathy-analysis/`](clinical-empathy-analysis/) | Clinical Empathy Analysis | Healthcare Safety | Supporting — needs a real corpus to be defensible |
+
+## What each one is
+
+### 1. ICU Early-Warning Models — [`icu-early-warning/`](icu-early-warning/)
+
+Early-warning models for hypoxemia and hypotension on MIMIC-IV or eICU, with calibration and uncertainty estimates.
+
+*Why it earns its place:* Supplies the 12,000-patient and 22%-false-alarm claims, which currently have no artifact anywhere. The largest evidence gap in the portfolio.
+
+*Target scale:* 12,000+ ICU patients (MIMIC-IV / eICU)
+
+### 2. PyHealth / RHealth Extension — [`pyhealth-rhealth-extension/`](pyhealth-rhealth-extension/)
+
+A PyHealth / RHealth extension released as a pip package.
+
+*Why it earns its place:* Makes the "adopted by multiple external research groups" claim checkable via registry download statistics.
+
+*Target scale:* Public registry download statistics
+
+### 3. Physiological Waveform Pipeline — [`physiological-waveform-pipeline/`](physiological-waveform-pipeline/)
+
+A high-frequency physiological waveform pipeline: preprocessing plus a released derived dataset.
+
+*Why it earns its place:* Supplies the 58,000-waveform-hours claim and gives the ICU models a documented input layer.
+
+*Target scale:* 58,000+ waveform-hours
+
+### 4. Clinical Empathy Analysis — [`clinical-empathy-analysis/`](clinical-empathy-analysis/)
+
+Quantify how much empathy a doctor expresses in Chinese clinical consultation transcripts, fusing a weighted empathy lexicon with ML models over engineered text features.
+
+*Why it earns its place:* Converts the one existing project from a synthetic-data demo into a defensible result.
+
+*Target scale:* Real labelled consultation corpus (scale to be stated)
+
+## Repository layout
+
+```
+2.0-Healthcare-Ai-Systems/
+├── icu-early-warning/
+├── pyhealth-rhealth-extension/
+├── physiological-waveform-pipeline/
+├── clinical-empathy-analysis/
+└── previous/        everything that was here before this restructure
+```
+
+Each project folder carries the same skeleton: `README.md`, `docs/`
+(METHOD, DATA, EVIDENCE), `src/`, `data/`, `results/`, `tests/`.
+
+## Ground rules
+
+1. **No number without a run log.** Anything cited in the petition must appear
+   in that project's `results/README.md` with a run date behind it.
+2. **No simulated data under a real claim.** Sample data lives in
+   `data/sample/`, labelled, and is never the source of a cited figure.
+3. **Adoption must be documentable** — named institutions, dated
+   correspondence, registry statistics. Never an inflated count.
+4. **Third-party and forked code stays labelled** and is never counted.
+
+## previous/
+
+Everything that lived at the top level before this restructure is preserved
+under [`previous/`](previous/) with nothing deleted. See
+[`previous/README.md`](previous/README.md) for the inventory and the disposition
+of each item.
+
+---
+Scaffold generated from `NIW_Project_Portfolio_and_Gap_Plan.xlsx` (sheets: Repo Build-Out Plan, Core Ideas at a Glance, NIW Claim vs Repo Evidence, Notion 创业 Alignment). Structure only — no results are claimed here yet.
