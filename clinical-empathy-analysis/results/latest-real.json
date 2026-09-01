@@ -1,0 +1,114 @@
+{
+  "generated_at": "2026-09-01T12:55:47+00:00",
+  "is_synthetic": false,
+  "data_source": "MTS-Dialog, real doctor-patient consultation transcripts; see data/MANIFEST.json for hashes and retrieval times",
+  "validity_reported": false,
+  "validity_withheld_because": "MTS-Dialog is annotated for clinical note sections, not for communication quality. Correlation with clinician-assigned empathy ratings cannot be computed because no such ratings exist for these conversations.",
+  "provenance": {
+    "dataset": "MTS-Dialog (public research dataset)",
+    "n_transcripts": 1076,
+    "skipped": {
+      "too_short": 225,
+      "unparsed": 0
+    },
+    "empathy_ratings_available": false,
+    "validity_withheld_because": "MTS-Dialog is annotated for clinical note sections, not for communication quality. Correlation with clinician-assigned empathy ratings cannot be computed because no such ratings exist for these conversations."
+  },
+  "files": [
+    {
+      "file": "mts-dialog/MTS-Dialog-TrainingSet.csv",
+      "status": "ok",
+      "rows": 1201,
+      "transcripts": 997,
+      "sha256": "65a28681dd59fc15",
+      "url": "https://raw.githubusercontent.com/abachaa/MTS-Dialog/main/Main-Dataset/MTS-Dialog-TrainingSet.csv",
+      "retrieved_utc": "2026-09-01T12:54:48+00:00"
+    },
+    {
+      "file": "mts-dialog/MTS-Dialog-ValidationSet.csv",
+      "status": "ok",
+      "rows": 100,
+      "transcripts": 79,
+      "sha256": "227206520c453438",
+      "url": "https://raw.githubusercontent.com/abachaa/MTS-Dialog/main/Main-Dataset/MTS-Dialog-ValidationSet.csv",
+      "retrieved_utc": "2026-09-01T12:54:48+00:00"
+    }
+  ],
+  "n_transcripts": 1076,
+  "score_distribution": {
+    "min": -3.5714,
+    "max": 17.0,
+    "median": 0.0,
+    "mean": 0.5755,
+    "q1": 0.0,
+    "q3": 0.4086,
+    "transcripts_with_no_cue": 731,
+    "share_with_no_cue": 0.6794
+  },
+  "structure": {
+    "median_doctor_token_share": 0.5217,
+    "median_question_rate": 0.8377
+  },
+  "cue_coverage": {
+    "just": 77,
+    "please": 54,
+    "sorry to hear": 51,
+    "how are you feeling": 45,
+    "difficult": 44,
+    "we can": 39,
+    "anything else": 37,
+    "tell me more": 25,
+    "i understand": 22,
+    "thank you for": 18,
+    "i can see": 15,
+    "together": 11,
+    "must be": 11,
+    "let us": 9,
+    "of course": 7,
+    "that sounds": 6,
+    "that is not": 4,
+    "can you describe": 4,
+    "what do you think": 3,
+    "nothing to worry": 2
+  },
+  "n_distinct_cues_fired": 25,
+  "highest_scoring": [
+    {
+      "tid": "MTS-ngSet-871",
+      "score": 17.0,
+      "cues": [
+        "how are you feeling",
+        "anything else"
+      ]
+    },
+    {
+      "tid": "MTS-ngSet-125",
+      "score": 11.111,
+      "cues": [
+        "how are you feeling",
+        "sorry to hear"
+      ]
+    },
+    {
+      "tid": "MTS-ngSet-392",
+      "score": 10.0,
+      "cues": [
+        "anything else"
+      ]
+    }
+  ],
+  "lowest_scoring": [
+    {
+      "tid": "MTS-ngSet-608",
+      "score": -1.707
+    },
+    {
+      "tid": "MTS-ngSet-803",
+      "score": -2.0
+    },
+    {
+      "tid": "MTS-ngSet-240",
+      "score": -3.571
+    }
+  ]
+}
