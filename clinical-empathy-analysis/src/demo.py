@@ -72,7 +72,7 @@ def run_real() -> dict:
         scores.append(f["lexicon_score"])
         doctor_shares.append(f["doctor_token_share"])
         question_rates.append(f["question_rate"])
-        fired = [c for c, _, _ in explain(tr)]
+        fired = [e["cue"] for e in explain(tr)]
         if not fired:
             zero_cue += 1
         for c in fired:
@@ -107,7 +107,7 @@ def run_real() -> dict:
         "cue_coverage": dict(sorted(cue_hits.items(), key=lambda kv: -kv[1])[:20]),
         "n_distinct_cues_fired": len(cue_hits),
         "highest_scoring": [{"tid": tr.tid, "score": round(s, 3),
-                             "cues": [c for c, _, _ in explain(tr)][:6]}
+                             "cues": [e["cue"] for e in explain(tr)][:6]}
                             for s, tr in ranked[:3]],
         "lowest_scoring": [{"tid": tr.tid, "score": round(s, 3)}
                            for s, tr in ranked[-3:]],
