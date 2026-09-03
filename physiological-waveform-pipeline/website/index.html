@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Physiological Waveform Pipeline</title>
+<meta name="description" content="Signal-quality assessment, artifact rejection and feature extraction for high-frequency arterial waveforms — scored against known artifact locations rather than assumed to work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#FCFCFD; --surface:#FFFFFF; --surface-2:#F4F5F8;
+  --ink:#16191F; --ink-2:#40474F; --muted:#6C7480;
+  --line:#E2E5EA; --line-2:#EFF1F4;
+  --accent:#1D5B70; --accent-2:#E6F0F3;
+  --ok:#2C6B4F; --ok-bg:#E5F1EA;
+  --warn:#8A6212; --warn-bg:#F7EFDC;
+  --demo:#6E4B8F; --demo-bg:#F0EAF6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+    --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+    --line:#282F38; --line-2:#20262E;
+    --accent:#72B3CB; --accent-2:#18272E;
+    --ok:#7BC09F; --ok-bg:#15251E;
+    --warn:#D8AD5E; --warn-bg:#292216;
+    --demo:#B79AD6; --demo-bg:#241C2E;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0F1216; --surface:#161A20; --surface-2:#1C212A;
+  --ink:#E9ECF0; --ink-2:#BEC5CE; --muted:#8A939F;
+  --line:#282F38; --line-2:#20262E;
+  --accent:#72B3CB; --accent-2:#18272E;
+  --ok:#7BC09F; --ok-bg:#15251E;
+  --warn:#D8AD5E; --warn-bg:#292216;
+  --demo:#B79AD6; --demo-bg:#241C2E;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+    "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px 88px}
+h1,h2,h3{font-family:Spectral,Georgia,"Songti SC",serif;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4.2vw,42px);font-weight:700;letter-spacing:-.015em;line-height:1.14}
+h2{font-size:clamp(20px,2.5vw,25px);font-weight:600;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+.stack{display:flex;flex-direction:column;gap:14px}
+.stack-lg{display:flex;flex-direction:column;gap:22px}
+section{margin-top:52px}
+
+header.mast{border-bottom:1px solid var(--line);padding:44px 0 26px;margin-bottom:8px;
+  display:flex;flex-direction:column;gap:15px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--ink-2);font-size:16.5px;max-width:66ch}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:4px;background:var(--surface-2);
+  color:var(--muted);font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.tag.demo{background:var(--demo-bg);color:var(--demo)}
+.tag.warn{background:var(--warn-bg);color:var(--warn)}
+
+.banner{display:flex;gap:13px;align-items:flex-start;background:var(--demo-bg);
+  border-radius:9px;padding:15px 18px;margin-top:26px}
+.banner .bi{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--demo);flex:none;padding-top:3px;font-weight:600}
+.banner p{font-size:14.2px;color:var(--ink-2)}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.metric{background:var(--surface);padding:15px 16px;display:flex;flex-direction:column;gap:5px}
+.metric .mk{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);line-height:1.35}
+.metric .mv{font-family:Spectral,Georgia,serif;font-size:26px;font-weight:600;
+  font-variant-numeric:tabular-nums;line-height:1.1;color:var(--accent)}
+.metric .mn{font-size:12.4px;color:var(--muted);line-height:1.4}
+
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.8px;min-width:520px}
+th{text-align:left;font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;padding:11px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)}
+td{padding:10px 14px;border-bottom:1px solid var(--line-2);vertical-align:top;line-height:1.5}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+tr:last-child td{border-bottom:0}
+
+pre{margin:0;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:15px 17px;overflow-x:auto;font-family:"IBM Plex Mono",monospace;
+  font-size:12.8px;line-height:1.62;color:var(--ink-2)}
+ul.tight{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:7px}
+ul.tight li::marker{color:var(--muted)}
+.note{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.foot{margin-top:60px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:13px;display:flex;flex-direction:column;gap:9px}
+figure{margin:0}
+svg.chart{display:block;width:100%;height:auto}
+@media (max-width:600px){.wrap{padding:0 17px 68px}.banner{flex-direction:column;gap:7px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="mast">
+  <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
+  <h1>Physiological Waveform Pipeline</h1>
+  <p class="lede">Signal-quality assessment, artifact rejection and feature extraction for high-frequency arterial waveforms — scored against known artifact locations rather than assumed to work.</p>
+  <div class="tags"><span class="tag ">125 Hz ABP</span><span class="tag ">5 quality rules</span><span class="tag ">scored rejection</span><span class="tag demo">synthetic cohort</span></div>
+</header>
+<div class="banner">
+  <span class="bi">Data</span>
+  <p>This run used a synthetic arterial-pressure cohort generated by src/synth.py. It is not patient data. Its value is that every artifact is injected at a known location, which is the only way to measure whether artifact rejection works instead of asserting that it does. MIMIC-IV Waveform and VitalDB are credentialed and are not bundled.</p>
+</div>
+
+<section>
+  <h2>What the pipeline decides</h2>
+  <div class="stack">
+    <p>Per ten-second window: is this waveform trustworthy enough to derive features
+    from? Both errors are expensive. Admitting artifact produces confident garbage in
+    whatever model consumes it; rejecting good signal throws away the data an
+    early-warning model needs.</p>
+    <p>Every rule is a named check with a stated threshold rather than a learned score.
+    A clinician asking why a window was dropped deserves a better answer than that the
+    model said so.</p>
+  </div>
+</section>
+
+<section>
+  <h2>This run</h2>
+  <div class="stack-lg">
+    <div class="metrics"><div class="metric"><span class="mk">Waveform-hours</span><span class="mv">4.00</span><span class="mn">120 segments</span></div><div class="metric"><span class="mk">Windows accepted</span><span class="mv">90.8%</span><span class="mn">1308 of 1440</span></div><div class="metric"><span class="mk">Rejection F1</span><span class="mv">0.904</span><span class="mn">P 0.89 / R 0.91</span></div><div class="metric"><span class="mk">Specificity</span><span class="mv">0.989</span><span class="mn">clean windows kept</span></div></div>
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated 2026-08-31T21:45:00+00:00 &middot;
+      168 artifacts injected across 52
+      of 120 segments (43% prevalence)
+    </p>
+    <div class="tw"><table><thead><tr><th></th><th>Detector rejected</th><th>Detector accepted</th></tr></thead><tbody><tr><td>Truly contaminated</td><td class="n">118</td><td class="n">11</td></tr><tr><td>Truly clean</td><td class="n">14</td><td class="n">1297</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section>
+  <h2>The five rules</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Rule</th><th>Catches</th><th>Fired</th></tr></thead><tbody><tr><td>low_pulsatility</td><td>Power outside the 0.7–3.5 Hz cardiac band — drift below, noise above</td><td class="n">16</td></tr><tr><td>flatline</td><td>Disconnection or a closed stopcock: a perfectly constant trace that every amplitude check passes</td><td class="n">23</td></tr><tr><td>out_of_range</td><td>Samples outside 20–220 mmHg</td><td class="n">0</td></tr><tr><td>spikes</td><td>Narrow transients — a jump immediately reversed</td><td class="n">8</td></tr><tr><td>step_change</td><td>Implausible sample-to-sample jump</td><td class="n">113</td></tr></tbody></table></div>
+    <div class="note">
+      <h3>The spike rule took three attempts, and the failures are instructive</h3>
+      <p>Scoring the first difference against its own median flags <em>every systolic
+      upstroke</em>, because an arterial upstroke genuinely is the largest
+      sample-to-sample change in a clean window. That version rejected 99% of good data.</p>
+      <p>Subtracting a five-sample running median does not fix it: the median lags a
+      fast upstroke, so each beat leaves ten samples of large residual and a clean
+      ten-second window scores about two hundred "spikes".</p>
+      <p>What separates the two is direction, not magnitude. A pressure upstroke is
+      monotone — consecutive differences share a sign for the whole rise. A spike goes
+      up and comes straight back down. Requiring a sign reversal <em>and</em> a
+      magnitude above the window's robust scale isolates transients without touching
+      the pulse, which is what moved rejection F1 from 0.045 to
+      0.904.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Threshold sensitivity</h2>
+  <div class="stack-lg">
+    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.91</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.75</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.58</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.41</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">0.24</text><path d="M46.0,76.5 L105.0,18.9 L164.1,18.9 L223.1,17.2 L311.7,17.2 L429.8,23.7 L666.0,56.0" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">precision</text><path d="M46.0,12.0 L105.0,12.0 L164.1,12.0 L223.1,12.0 L311.7,12.0 L429.8,62.2 L666.0,180.0" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="40" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">recall</text><path d="M46.0,49.6 L105.0,15.5 L164.1,15.5 L223.1,14.6 L311.7,14.6 L429.8,44.8 L666.0,149.5" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="55" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--ok)">F1</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">step-change threshold (mmHg)</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">score</text></svg></figure>
+    <div class="note">
+      <h3>Which rule is worth sweeping</h3>
+      <p>This sweep moved twice while the pipeline was built. Sweeping the SQI threshold
+      gave a flat line, because SQI fires on 16 of 1440 windows here. So did
+      sweeping the spike threshold, once the spike detector worked — a detector that
+      separates the classes cleanly makes its own threshold stop mattering.</p>
+      <p>Step-change is what binds on this cohort, so that is what is swept. Which rule
+      binds is a property of the data, not a constant, and on real records it will move
+      again. A sweep over an inactive rule looks like a sensitivity analysis and tells
+      you nothing.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Derived dataset</h2>
+  <div class="stack-lg">
+    <p>1,308 rows &times; 9 features, written to
+    <code>data/derived_features.csv</code>. Only accepted windows reach this stage.</p>
+    <div class="tw"><table><thead><tr><th>Feature</th><th>Why an early-warning model wants it</th></tr></thead><tbody><tr><td>map_mmhg / sbp_mmhg / dbp_mmhg</td><td>Baseline haemodynamics</td></tr><tr><td>pulse_pressure</td><td>Narrows before the mean falls in hypovolaemia</td></tr><tr><td>heart_rate_bpm</td><td>From detected systolic peaks, not a monitor feed</td></tr><tr><td>hr_variability_ms</td><td>Falls with autonomic impairment, often early</td></tr><tr><td>sbp_slope_mmhg_per_min</td><td>Trend within the window, not just its level</td></tr><tr><td>pulse_pressure_variation</td><td>Classic fluid-responsiveness signal</td></tr><tr><td>sqi</td><td>Carried forward so downstream models can weight by quality</td></tr></tbody></table></div>
+  </div>
+</section>
+
+<section>
+  <h2>Getting real data in</h2>
+  <div class="stack-lg">
+    <div class="tw"><table><thead><tr><th>Source</th><th>Rate</th><th>Access</th><th>Bundled here</th></tr></thead><tbody><tr><td>MIMIC-IV Waveform</td><td>125 Hz</td><td>credentialed PhysioNet account + CITI training</td><td>no</td></tr><tr><td>VitalDB</td><td>100 Hz</td><td>open registration, non-commercial licence</td><td>no</td></tr><tr><td>Synthetic cohort</td><td>125 Hz</td><td>generated by src/synth.py</td><td>yes</td></tr></tbody></table></div>
+    <p>The loaders in <code>src/loaders.py</code> return the same segment shape the rest
+    of the pipeline consumes, so switching from synthetic to real records changes that
+    one module and nothing else. MIMIC-IV Waveform needs a credentialed PhysioNet
+    account and CITI human-subjects training — a real gate, and no result from this
+    project can claim MIMIC scale until it has been passed.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Reproduce it</h2>
+  <div class="stack">
+    <pre>cd physiological-waveform-pipeline
+pip install -r requirements.txt
+python -m pytest tests/ -q      # 17 tests
+python -m src.demo</pre>
+  </div>
+</section>
+
+<section>
+  <h2>What this does not establish</h2>
+  <div class="stack">
+    <ul class="tight">
+      <li>4.0 synthetic waveform-hours. Real ICU records contain
+      failure modes this generator does not model, and the rejection scores above
+      will not survive contact with them unchanged.</li>
+      <li>The generator and the detector were written by the same person. Scoring a
+      detector on artifacts you chose to inject is a necessary first step and not an
+      external validation.</li>
+      <li>ABP only. No ECG, PPG, respiratory or capnography channels.</li>
+      <li>No clinical outcome is attached to any window here, so nothing in this
+      project speaks to patient benefit.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="foot">
+  <p>2.0-Healthcare-Ai-Systems &middot; physiological-waveform-pipeline &middot; part of a five-repository portfolio on optimization-driven,
+     system-level decision frameworks.</p>
+  <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
+     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+</div>
+</div>
+</body>
+</html>
