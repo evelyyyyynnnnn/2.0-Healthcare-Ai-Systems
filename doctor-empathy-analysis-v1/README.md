@@ -599,3 +599,19 @@ The new system accurately detects and visualizes empathetic expressions in medic
 *This project demonstrates core NLP competencies in modeling socio-linguistic features. Structured feature extraction and visualization provide fresh insights for empathy research in healthcare. By uniting linguistic theory, feature engineering, and machine learning, the system offers a scientific foundation for evaluating empathy in Chinese medical communication.*
 
 *The current release runs end-to-end, producing full analytical outputs and visualizations, laying a solid foundation for further research and applied development.*
+
+---
+
+## Why this folder is still here
+
+`../clinical-empathy-analysis/` is the rewrite and supersedes this project's
+method: it runs on 1,077 real doctor-patient consultations from MTS-Dialog
+rather than on a sample, and it carries 32 tests.
+
+This version is kept rather than deleted because it holds artifacts the rewrite
+does not reproduce: three trained models (`outputs/models/*.pkl`), the figures
+generated from them, and the original sample dataset.
+
+For the petition, cite the rewrite. This folder is prior work, not current
+evidence — its results were produced on a small sample and are not labelled
+with the scale caveats the rewrite states explicitly.

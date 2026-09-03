@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-08-31T21:45:04+00:00",
+  "is_synthetic": true,
+  "data_source": "synthetic subjects with a per-subject offset (src/demo.py)",
+  "package": {
+    "name": "icuflow",
+    "version": "0.1.0",
+    "exports": 14,
+    "published": false
+  },
+  "leakage": {
+    "row_split_auroc": 0.687,
+    "subject_split_auroc": 0.5583,
+    "inflation": 0.1287,
+    "inflation_pct": 23.05,
+    "n_subjects": 200,
+    "n_rows": 16000
+  },
+  "calibration": {
+    "cases": [
+      {
+        "case": "already well calibrated (boosted trees, log loss)",
+        "raw_ece": 0.07144,
+        "isotonic_ece": 0.14079,
+        "platt_ece": 0.13196,
+        "raw_auroc": 0.632,
+        "isotonic_auroc": 0.6347
+      },
+      {
+        "case": "overconfident (monotone distortion, same ranking)",
+        "raw_ece": 0.22481,
+        "isotonic_ece": 0.14079,
+        "platt_ece": 0.13773,
+        "raw_auroc": 0.632,
+        "isotonic_auroc": 0.6347
+      }
+    ]
+  },
+  "alarms": {
+    "target_sensitivity": 0.8,
+    "baseline_false_alerts": 2342,
+    "model_false_alerts": 2241,
+    "reduction_pct": 4.31,
+    "baseline_sensitivity": 0.8,
+    "model_sensitivity": 0.8
+  },
+  "guards": {
+    "leak_detected": true,
+    "active_event_row_dropped": true,
+    "insufficient_followup_dropped": true
+  },
+  "cli": {
+    "cli_exit": 0,
+    "subcommands": [
+      "check-split",
+      "score"
+    ],
+    "help_ok": true
+  }
+}

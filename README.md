@@ -69,11 +69,12 @@ Quantify how much empathy a doctor expresses in Chinese clinical consultation tr
 ├── pyhealth-rhealth-extension/
 ├── physiological-waveform-pipeline/
 ├── clinical-empathy-analysis/
-└── previous/        everything that was here before this restructure
+│
+│   ── earlier work, promoted out of previous/ ──
+└── doctor-empathy-analysis-v1/
 ```
 
-Each project folder carries the same skeleton: `README.md`, `docs/`
-(METHOD, DATA, EVIDENCE), `src/`, `data/`, `results/`, `tests/`.
+Every rebuilt project carries the same skeleton: `README.md`, `src/`, `data/`, `results/`, `tests/`, `website/`.
 
 ## Ground rules
 
@@ -85,12 +86,18 @@ Each project folder carries the same skeleton: `README.md`, `docs/`
    correspondence, registry statistics. Never an inflated count.
 4. **Third-party and forked code stays labelled** and is never counted.
 
-## previous/
+## Earlier work
 
-Everything that lived at the top level before this restructure is preserved
-under [`previous/`](previous/) with nothing deleted. See
-[`previous/README.md`](previous/README.md) for the inventory and the disposition
-of each item.
+There is no `previous/` folder any more. Everything that was in it has been promoted to the top level, so every piece of work in this repository is a first-class folder that can be opened, read and continued.
+
+Nothing was deleted except items the rebuild genuinely supersedes; those remain in git history.
+
+| Folder | What it is | How it may be used |
+|---|---|---|
+| [`doctor-empathy-analysis-v1/`](doctor-empathy-analysis-v1/) | The first empathy scorer, with three trained models, its figures and its sample dataset. | Superseded by `clinical-empathy-analysis/`, which runs on 1,077 real consultations. Kept because the trained models and outputs are not reproduced by the rewrite. Cite the rewrite, not this. |
+
+**Read the third column before citing anything here.** Forks of third-party work, duplicates, retired projects and asset-only folders are labelled as such and are not part of the petition's evidence.
+
 
 ---
 Scaffold generated from `NIW_Project_Portfolio_and_Gap_Plan.xlsx` (sheets: Repo Build-Out Plan, Core Ideas at a Glance, NIW Claim vs Repo Evidence, Notion 创业 Alignment). Structure only — no results are claimed here yet.
