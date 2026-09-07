@@ -6,7 +6,7 @@
 
 ## Status
 
-This is working code with a runnable demo and 0 tests. It is **not** a
+This is working code with a runnable demo and 32 tests. It is **not** a
 finished result.
 
 The correlation on this page is CIRCULAR and must not be read as validity. The same person wrote the transcripts and the lexicon, so the transcripts contain the cues the lexicon looks for. What is demonstrated is that the pipeline is internally consistent and that the evaluation protocol is sound — not that the measure tracks clinical empathy.
@@ -17,7 +17,7 @@ Last run: `2026-08-31T18:32:12+00:00`
 
 ```bash
 pip install -r requirements.txt
-python -m pytest tests/ -q     # 0 tests
+python -m pytest tests/ -q     # 32 tests
 python -m src.demo             # runs everything, rewrites results/ and website/
 ```
 
