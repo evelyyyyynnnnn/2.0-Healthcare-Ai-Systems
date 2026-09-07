@@ -1,6 +1,6 @@
-# Clinical Empathy Analysis — website
+# icuflow — website
 
-Static site for `clinical-empathy-analysis`. No build step: Vercel serves this folder as-is.
+Static site for `4-pyhealth-rhealth-extension`. No build step: Vercel serves this folder as-is.
 
 ## Deploy on its own
 

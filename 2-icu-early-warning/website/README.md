@@ -1,6 +1,6 @@
 # ICU Early-Warning Models — website
 
-Static site for `icu-early-warning`. No build step: Vercel serves this folder as-is.
+Static site for `2-icu-early-warning`. No build step: Vercel serves this folder as-is.
 
 ## Deploy on its own
 

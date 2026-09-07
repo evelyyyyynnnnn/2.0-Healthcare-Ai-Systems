@@ -71,7 +71,7 @@ website/
 `website/` has no build step. To deploy it independently:
 
 ```bash
-cp -r website/ ../my-physiological-waveform-pipeline-site && cd ../my-physiological-waveform-pipeline-site
+cp -r website/ ../my-3-physiological-waveform-pipeline-site && cd ../my-3-physiological-waveform-pipeline-site
 git init && git add -A && git commit -m "site"
 vercel deploy --prod
 ```

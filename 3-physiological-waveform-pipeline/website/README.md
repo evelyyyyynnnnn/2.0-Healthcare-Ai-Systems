@@ -1,6 +1,6 @@
 # Physiological Waveform Pipeline — website
 
-Static site for `physiological-waveform-pipeline`. No build step: Vercel serves this folder as-is.
+Static site for `3-physiological-waveform-pipeline`. No build step: Vercel serves this folder as-is.
 
 ## Deploy on its own
 
