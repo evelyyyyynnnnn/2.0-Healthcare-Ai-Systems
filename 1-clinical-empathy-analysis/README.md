@@ -69,7 +69,7 @@ website/
 `website/` has no build step. To deploy it independently:
 
 ```bash
-cp -r website/ ../my-clinical-empathy-analysis-site && cd ../my-clinical-empathy-analysis-site
+cp -r website/ ../my-1-clinical-empathy-analysis-site && cd ../my-1-clinical-empathy-analysis-site
 git init && git add -A && git commit -m "site"
 vercel deploy --prod
 ```

@@ -22,14 +22,14 @@ are financial stability, healthcare safety and secure digital infrastructure.
 
 | Folder | Project | Pillar | Evidence value |
 |---|---|---|---|
-| [`icu-early-warning/`](icu-early-warning/) | ICU Early-Warning Models | Healthcare Safety | CORE — highest priority in this repo |
-| [`pyhealth-rhealth-extension/`](pyhealth-rhealth-extension/) | PyHealth / RHealth Extension | Healthcare Safety | CORE — makes an adoption claim checkable |
-| [`physiological-waveform-pipeline/`](physiological-waveform-pipeline/) | Physiological Waveform Pipeline | Healthcare Safety | Supporting — supplies the input layer for the ICU models |
-| [`clinical-empathy-analysis/`](clinical-empathy-analysis/) | Clinical Empathy Analysis | Healthcare Safety | Supporting — needs a real corpus to be defensible |
+| [`2-icu-early-warning/`](2-icu-early-warning/) | ICU Early-Warning Models | Healthcare Safety | CORE — highest priority in this repo |
+| [`4-pyhealth-rhealth-extension/`](4-pyhealth-rhealth-extension/) | PyHealth / RHealth Extension | Healthcare Safety | CORE — makes an adoption claim checkable |
+| [`3-physiological-waveform-pipeline/`](3-physiological-waveform-pipeline/) | Physiological Waveform Pipeline | Healthcare Safety | Supporting — supplies the input layer for the ICU models |
+| [`1-clinical-empathy-analysis/`](1-clinical-empathy-analysis/) | Clinical Empathy Analysis | Healthcare Safety | Supporting — needs a real corpus to be defensible |
 
 ## What each one is
 
-### 1. ICU Early-Warning Models — [`icu-early-warning/`](icu-early-warning/)
+### 1. ICU Early-Warning Models — [`2-icu-early-warning/`](2-icu-early-warning/)
 
 Early-warning models for hypoxemia and hypotension on MIMIC-IV or eICU, with calibration and uncertainty estimates.
 
@@ -37,7 +37,7 @@ Early-warning models for hypoxemia and hypotension on MIMIC-IV or eICU, with cal
 
 *Target scale:* 12,000+ ICU patients (MIMIC-IV / eICU)
 
-### 2. PyHealth / RHealth Extension — [`pyhealth-rhealth-extension/`](pyhealth-rhealth-extension/)
+### 2. PyHealth / RHealth Extension — [`4-pyhealth-rhealth-extension/`](4-pyhealth-rhealth-extension/)
 
 A PyHealth / RHealth extension released as a pip package.
 
@@ -45,7 +45,7 @@ A PyHealth / RHealth extension released as a pip package.
 
 *Target scale:* Public registry download statistics
 
-### 3. Physiological Waveform Pipeline — [`physiological-waveform-pipeline/`](physiological-waveform-pipeline/)
+### 3. Physiological Waveform Pipeline — [`3-physiological-waveform-pipeline/`](3-physiological-waveform-pipeline/)
 
 A high-frequency physiological waveform pipeline: preprocessing plus a released derived dataset.
 
@@ -53,7 +53,7 @@ A high-frequency physiological waveform pipeline: preprocessing plus a released 
 
 *Target scale:* 58,000+ waveform-hours
 
-### 4. Clinical Empathy Analysis — [`clinical-empathy-analysis/`](clinical-empathy-analysis/)
+### 4. Clinical Empathy Analysis — [`1-clinical-empathy-analysis/`](1-clinical-empathy-analysis/)
 
 Quantify how much empathy a doctor expresses in Chinese clinical consultation transcripts, fusing a weighted empathy lexicon with ML models over engineered text features.
 
@@ -65,10 +65,10 @@ Quantify how much empathy a doctor expresses in Chinese clinical consultation tr
 
 ```
 2.0-Healthcare-Ai-Systems/
-├── icu-early-warning/
-├── pyhealth-rhealth-extension/
-├── physiological-waveform-pipeline/
-└── clinical-empathy-analysis/
+├── 2-icu-early-warning/
+├── 4-pyhealth-rhealth-extension/
+├── 3-physiological-waveform-pipeline/
+└── 1-clinical-empathy-analysis/
 ```
 
 Every rebuilt project carries the same skeleton: `README.md`, `src/`, `data/`, `results/`, `tests/`, `website/`.
