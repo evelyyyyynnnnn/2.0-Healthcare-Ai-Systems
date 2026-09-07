@@ -1,0 +1,84 @@
+{
+  "generated_at": "2026-09-06T23:57:16+00:00",
+  "is_synthetic": false,
+  "data_source": "PhysioNet MIMIC-IV clinical database demo (open access); see data/MANIFEST.json for file hashes and retrieval times",
+  "cohort_is_a_demonstration_not_a_study": true,
+  "sample_size_caveat": "about 100 ICU stays. The direction of the leakage effect is meaningful; its magnitude, from a cohort this small, is not a population estimate.",
+  "package": {
+    "name": "icuflow",
+    "version": "0.1.0",
+    "exports": 14,
+    "published": false
+  },
+  "leakage": {
+    "row_split_auroc": 0.9058,
+    "subject_split_auroc": 0.4989,
+    "inflation": 0.407,
+    "inflation_pct": 81.57,
+    "n_subjects": 97,
+    "n_stays": 134,
+    "n_readmissions": 37,
+    "n_rows": 22512,
+    "positive_rate": 0.02838,
+    "provenance": {
+      "database": "PhysioNet mimic-iv-demo (open access)",
+      "n_stays_in_file": 140,
+      "n_stays_built": 134,
+      "skipped": {
+        "too_short": 6,
+        "no_vitals": 0
+      },
+      "grid_step_hours": 0.5,
+      "carry_forward_limit_hours": 2.0,
+      "cohort_is_a_demonstration_not_a_study": true,
+      "files": {
+        "mimic-iv-demo/hosp/admissions.csv.gz": {
+          "sha256": "910b9f160ffdf1e0",
+          "retrieved_utc": "2026-09-06T23:56:50+00:00",
+          "bytes": 11072
+        },
+        "mimic-iv-demo/hosp/patients.csv.gz": {
+          "sha256": "59dcc6cd8450ddf0",
+          "retrieved_utc": "2026-09-06T23:56:50+00:00",
+          "bytes": 1083
+        },
+        "mimic-iv-demo/icu/chartevents.csv.gz": {
+          "sha256": "90f096ad3db847ed",
+          "retrieved_utc": "2026-09-06T23:57:09+00:00",
+          "bytes": 5549389
+        },
+        "mimic-iv-demo/icu/d_items.csv.gz": {
+          "sha256": "1690467a82234522",
+          "retrieved_utc": "2026-09-06T23:56:50+00:00",
+          "bytes": 57073
+        },
+        "mimic-iv-demo/icu/icustays.csv.gz": {
+          "sha256": "e05e81aa52a3022e",
+          "retrieved_utc": "2026-09-06T23:56:50+00:00",
+          "bytes": 5667
+        }
+      },
+      "event": "hypoxemia",
+      "event_definition": "SpO2 < 90%",
+      "horizon_hours": 4.0,
+      "n_rows": 22512,
+      "n_subjects": 97,
+      "n_stays_used": 134,
+      "positive_rate": 0.02838,
+      "grouping_key": "subject_id (the person), not stay_id"
+    }
+  },
+  "guards": {
+    "leak_detected": true,
+    "active_event_row_dropped": true,
+    "insufficient_followup_dropped": true
+  },
+  "cli": {
+    "cli_exit": 0,
+    "subcommands": [
+      "check-split",
+      "score"
+    ],
+    "help_ok": true
+  }
+}

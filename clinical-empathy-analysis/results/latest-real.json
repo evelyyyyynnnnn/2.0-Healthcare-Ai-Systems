@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T12:55:47+00:00",
+  "generated_at": "2026-09-06T23:54:23+00:00",
   "is_synthetic": false,
   "data_source": "MTS-Dialog, real doctor-patient consultation transcripts; see data/MANIFEST.json for hashes and retrieval times",
   "validity_reported": false,
@@ -22,7 +22,7 @@
       "transcripts": 997,
       "sha256": "65a28681dd59fc15",
       "url": "https://raw.githubusercontent.com/abachaa/MTS-Dialog/main/Main-Dataset/MTS-Dialog-TrainingSet.csv",
-      "retrieved_utc": "2026-09-01T12:54:48+00:00"
+      "retrieved_utc": "2026-09-06T23:54:23+00:00"
     },
     {
       "file": "mts-dialog/MTS-Dialog-ValidationSet.csv",
@@ -31,7 +31,7 @@
       "transcripts": 79,
       "sha256": "227206520c453438",
       "url": "https://raw.githubusercontent.com/abachaa/MTS-Dialog/main/Main-Dataset/MTS-Dialog-ValidationSet.csv",
-      "retrieved_utc": "2026-09-01T12:54:48+00:00"
+      "retrieved_utc": "2026-09-06T23:54:23+00:00"
     }
   ],
   "n_transcripts": 1076,
