@@ -1,0 +1,264 @@
+{
+  "generated_at": "2026-09-06T23:56:50+00:00",
+  "is_synthetic": false,
+  "data_source": "PhysioNet BIDMC PPG and Respiration Dataset (open access); see data/MANIFEST.json for file hashes and retrieval times",
+  "provenance": {
+    "database": "PhysioNet BIDMC PPG and Respiration Dataset (open access)",
+    "channel": "pleth",
+    "fs_hz": 125.0,
+    "n_records": 10,
+    "signal_is_ppg_not_arterial_line": true,
+    "artifact_locations_annotated": false,
+    "artifact_scoring_withheld_because": "BIDMC does not annotate artifact locations, so rejection precision and recall have no answer key on this dataset",
+    "records": [
+      {
+        "record": "01",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "21495169cc36e823",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_01_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:55:18+00:00"
+      },
+      {
+        "record": "05",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "1963671232fca496",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_05_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:55:28+00:00"
+      },
+      {
+        "record": "11",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "64b931ccd9f6b94b",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_11_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:55:39+00:00"
+      },
+      {
+        "record": "17",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "35ee803bafd453f7",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_17_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:55:48+00:00"
+      },
+      {
+        "record": "23",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "3cedad370183b867",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_23_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:55:59+00:00"
+      },
+      {
+        "record": "29",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "66261436c7fce120",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_29_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:56:10+00:00"
+      },
+      {
+        "record": "35",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "f7073289b8cacd26",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_35_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:56:18+00:00"
+      },
+      {
+        "record": "41",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "371e0c0341d64fe3",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_41_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:56:30+00:00"
+      },
+      {
+        "record": "47",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "2d8033ad7b54b26c",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_47_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:56:40+00:00"
+      },
+      {
+        "record": "53",
+        "status": "ok",
+        "channel": "pleth",
+        "n_samples": 60001,
+        "duration_s": 480.0,
+        "has_monitor_reference": true,
+        "reference_channel": "pulse",
+        "sha256": "136fd7a958cbc591",
+        "url": "https://physionet.org/files/bidmc/1.0.0/bidmc_csv/bidmc_53_Signals.csv",
+        "retrieved_utc": "2026-09-06T23:56:49+00:00"
+      }
+    ]
+  },
+  "channel_limits": {
+    "units": "arbitrary",
+    "lo": -Infinity,
+    "hi": Infinity,
+    "step_limit": "60% of the window's own peak-to-peak"
+  },
+  "artifact_scoring_reported": false,
+  "artifact_scoring_withheld_because": "BIDMC does not annotate artifact locations, so rejection precision and recall have no answer key on this dataset",
+  "pressure_values_suppressed_because": "PLETH is a photoplethysmogram, not an arterial line; a systolic pressure in mmHg is not something this signal measures",
+  "per_record": [
+    {
+      "record": "01",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 1,
+      "accept_rate": 0.0208,
+      "derived_hr_bpm": 93.52,
+      "monitor_hr_bpm": 91.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 2.52
+    },
+    {
+      "record": "05",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 45,
+      "accept_rate": 0.9375,
+      "derived_hr_bpm": 98.0,
+      "monitor_hr_bpm": 98.0,
+      "reference_channel": "pulse",
+      "difference_bpm": -0.0
+    },
+    {
+      "record": "11",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 32,
+      "accept_rate": 0.6667,
+      "derived_hr_bpm": 91.62,
+      "monitor_hr_bpm": 92.0,
+      "reference_channel": "pulse",
+      "difference_bpm": -0.38
+    },
+    {
+      "record": "17",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 48,
+      "accept_rate": 1.0,
+      "derived_hr_bpm": 80.43,
+      "monitor_hr_bpm": 77.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 3.43
+    },
+    {
+      "record": "23",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 38,
+      "accept_rate": 0.7917,
+      "derived_hr_bpm": 63.08,
+      "monitor_hr_bpm": 63.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 0.08
+    },
+    {
+      "record": "29",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 43,
+      "accept_rate": 0.8958,
+      "derived_hr_bpm": 90.21,
+      "monitor_hr_bpm": 90.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 0.21
+    },
+    {
+      "record": "35",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 43,
+      "accept_rate": 0.8958,
+      "derived_hr_bpm": 98.51,
+      "monitor_hr_bpm": 101.0,
+      "reference_channel": "pulse",
+      "difference_bpm": -2.49
+    },
+    {
+      "record": "41",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 29,
+      "accept_rate": 0.6042,
+      "derived_hr_bpm": 79.09,
+      "monitor_hr_bpm": 79.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 0.09
+    },
+    {
+      "record": "47",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 47,
+      "accept_rate": 0.9792,
+      "derived_hr_bpm": 83.37,
+      "monitor_hr_bpm": 83.0,
+      "reference_channel": "pulse",
+      "difference_bpm": 0.37
+    },
+    {
+      "record": "53",
+      "duration_s": 480.0,
+      "windows": 48,
+      "accepted": 48,
+      "accept_rate": 1.0,
+      "derived_hr_bpm": 85.63,
+      "monitor_hr_bpm": 92.0,
+      "reference_channel": "pulse",
+      "difference_bpm": -6.37
+    }
+  ],
+  "beat_detection_vs_monitor": {
+    "n_records_compared": 10,
+    "median_difference_bpm": 0.084,
+    "mean_absolute_difference_bpm": 1.593,
+    "max_absolute_difference_bpm": 6.372,
+    "within_5_bpm": 9
+  }
+}
