@@ -18,7 +18,7 @@ Supplies the 58,000-waveform-hours claim and gives the ICU models a documented i
 
 ## Action
 
-Build the preprocessing pipeline, publish the derived dataset with a stated scale, and wire it into icu-early-warning/ as its documented input.
+Build the preprocessing pipeline, publish the derived dataset with a stated scale, and wire it into 2-icu-early-warning/ as its documented input.
 
 ## Exhibit readiness
 
