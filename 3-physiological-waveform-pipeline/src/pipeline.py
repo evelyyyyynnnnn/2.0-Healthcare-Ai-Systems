@@ -16,6 +16,23 @@ import numpy as np
 from .features import FEATURE_NAMES, extract
 from .quality import assess_window, window_signal
 
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+def record_path(p) -> str:
+    """How a written file is named in the result.
+
+    The result file is cited as evidence, so it names the output relative to
+    the project. The absolute path of whichever machine produced the run is
+    not evidence of anything, is wrong on every other machine, and discloses
+    the author's home directory to anyone who opens the published page.
+    """
+    p = pathlib.Path(p)
+    try:
+        return str(p.resolve().relative_to(ROOT))
+    except ValueError:
+        return p.name
+
 
 def process_segment(sig: np.ndarray, fs: float, window_s: float = 10.0,
                     **qkw) -> tuple:
@@ -117,7 +134,7 @@ def build_dataset(segments, fs: float, window_s: float = 10.0,
         "acceptance_rate": round(n_accepted / n_windows, 4) if n_windows else 0.0,
         "n_feature_rows": len(all_rows),
         "features": list(FEATURE_NAMES),
-        "output": str(out_path) if out_path else None,
+        "output": record_path(out_path) if out_path else None,
     }
 
 

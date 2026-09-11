@@ -154,3 +154,27 @@ def test_real_sources_are_declared_unbundled():
     for s in describe_sources():
         if s["name"] != "Synthetic cohort":
             assert s["bundled"] is False
+
+
+# --- what the result file is allowed to say about where it wrote its output ---
+#
+# The recorded output path once carried the absolute path of the machine that
+# produced the run. The result is cited as evidence, so it names the file
+# relative to the project instead.
+
+def test_record_path_is_relative_to_the_project():
+    from src.pipeline import ROOT, record_path
+
+    recorded = record_path(ROOT / "data" / "derived_features.csv")
+
+    assert recorded == "data/derived_features.csv"
+    assert str(ROOT) not in recorded
+
+
+def test_record_path_outside_the_project_keeps_only_the_filename(tmp_path):
+    from src.pipeline import record_path
+
+    recorded = record_path(tmp_path / "elsewhere.csv")
+
+    assert recorded == "elsewhere.csv"
+    assert not recorded.startswith("/")

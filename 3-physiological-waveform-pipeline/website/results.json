@@ -27,7 +27,7 @@
       "pulse_pressure_variation",
       "sqi"
     ],
-    "output": "/home/user/2.0-Healthcare-Ai-Systems/physiological-waveform-pipeline/data/derived_features.csv"
+    "output": "data/derived_features.csv"
   },
   "rejection": {
     "tp": 118,
