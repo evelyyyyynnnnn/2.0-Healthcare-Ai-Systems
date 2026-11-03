@@ -1,6 +1,6 @@
 # icuflow — website
 
-Static site for `4-pyhealth-rhealth-extension`. No build step: Vercel serves this folder as-is.
+Static site for `pyhealth-rhealth-extension`. No build step: Vercel serves this folder as-is.
 
 ## Deploy on its own
 
