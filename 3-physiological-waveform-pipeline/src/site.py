@@ -27,6 +27,11 @@ META = {
 
 
 def build_site(results: dict) -> pathlib.Path:
+    # The real run and the authored run have different shapes; dispatch on the
+    # flag the results file carries rather than on which keys happen to exist.
+    if not results.get("is_synthetic", True):
+        return build_site_real(results)
+
     c, d, rj = results["cohort"], results["dataset"], results["rejection"]
     sweep = results["step_sweep"]
 
@@ -196,3 +201,119 @@ python -m src.demo</pre>
 </section>
 """
     return sk.build(ROOT, META, body, results)
+
+
+# --------------------------------------------------------------------------
+# Real-data page: the pipeline on real ICU recordings, checked against the
+# bedside monitor's own pulse channel -- an independent device, not a label
+# this pipeline could have written for itself.
+# --------------------------------------------------------------------------
+
+REAL_META = dict(META)
+REAL_META.update({
+    "tags": [("real BIDMC", "real"), ("10 ICU recordings", ""),
+             ("125 Hz photoplethysmogram", ""), ("checked against the monitor", "")],
+    "banner": "Run on the PhysioNet BIDMC PPG and Respiration Dataset: ten real ICU "
+              "recordings at 125 Hz, retrieved with per-file hashes recorded in "
+              "data/MANIFEST.json. Derived beat rates are compared against the bedside "
+              "monitor's own pulse channel, which is an independent measurement rather "
+              "than a label this pipeline produced.",
+    "datanote": "Built from results/latest-real.json. BIDMC does not annotate artifact "
+                "locations, so rejection precision and recall have no answer key on "
+                "this dataset and are not computed.",
+})
+
+
+def build_site_real(results: dict) -> pathlib.Path:
+    prov = results.get("provenance", {})
+    cmp_ = results.get("beat_detection_vs_monitor", {})
+    rec = results.get("per_record", [])
+
+    metrics = sk.metric_grid([
+        ("Median error", f"{cmp_.get('median_difference_bpm', 0):.3f} bpm",
+         "against the bedside monitor"),
+        ("Within 5 bpm", f"{cmp_.get('within_5_bpm', 0)} of "
+                         f"{cmp_.get('n_records_compared', 0)}", "records agreeing"),
+        ("Mean absolute error", f"{cmp_.get('mean_absolute_difference_bpm', 0):.3f} bpm",
+         "across all records"),
+        ("Worst record", f"{cmp_.get('max_absolute_difference_bpm', 0):.3f} bpm",
+         "largest single disagreement"),
+    ])
+
+    rec_tbl = sk.table(
+        ["Record", "Windows accepted", "Accept rate", "Derived rate",
+         "Monitor rate", "Difference"],
+        [[r["record"], f"{r['accepted']} of {r['windows']}",
+          f"{r['accept_rate'] * 100:.1f}%", f"{r['derived_hr_bpm']:.2f} bpm",
+          f"{r['monitor_hr_bpm']:.1f} bpm", f"{r['difference_bpm']:+.2f} bpm"]
+         for r in rec],
+        numeric_cols=(1, 2, 3, 4, 5))
+
+    err_chart = sk.bar_chart(
+        [(f"record {r['record']}", abs(r["difference_bpm"])) for r in rec],
+        fmt="{:.2f}")
+    acc_chart = sk.bar_chart(
+        [(f"record {r['record']}", r["accept_rate"]) for r in rec], fmt="{:.2f}")
+
+    worst = max(rec, key=lambda r: abs(r["difference_bpm"])) if rec else None
+    strict = min(rec, key=lambda r: r["accept_rate"]) if rec else None
+
+    body = f"""
+<section>
+  <h2>This run</h2>
+  <div class="stack-lg">
+    {metrics}
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated {sk.esc(results['generated_at'])} &middot;
+      {prov.get('n_records', 0)} records &middot; channel {sk.esc(prov.get('channel', ''))}
+      &middot; {prov.get('fs_hz', 0):g} Hz
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Agreement with an independent device</h2>
+  <div class="stack-lg">
+    {err_chart}
+    {rec_tbl}
+    <p>The comparison channel is the monitor's own pulse output. It is produced by a
+    different device running a different algorithm, so agreeing with it is evidence
+    about this pipeline rather than a restatement of its own assumptions.</p>
+  </div>
+</section>
+
+<section>
+  <h2>How much signal each recording survives the quality screen</h2>
+  <div class="stack-lg">
+    {acc_chart}
+    <p>{"Record " + strict["record"] + " accepts only "
+        + f"{strict['accepted']} of {strict['windows']} windows"
+        + f" ({strict['accept_rate'] * 100:.1f}%), and the rate derived from what"
+          f" survives still lands {abs(strict['difference_bpm']):.2f} bpm from the"
+          " monitor. " if strict else ""}That is the screen doing its job: refusing to
+    derive a rate from signal it judges corrupt, rather than averaging noise into a
+    confident-looking number.</p>
+  </div>
+</section>
+
+<section>
+  <h2>What this run does not compute</h2>
+  <div class="stack-lg">
+    <div class="note">
+      <h3>Artifact scoring has no answer key here</h3>
+      <p>{sk.esc(results.get('artifact_scoring_withheld_because', ''))}</p>
+      <p>{sk.esc(results.get('pressure_values_suppressed_because', ''))}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Reproduce</h2>
+  <div class="stack">
+    <pre>python -m src.demo --real
+# -&gt; results/latest-real.json
+pytest -q</pre>
+  </div>
+</section>
+"""
+    return sk.build(ROOT, REAL_META, body, results)

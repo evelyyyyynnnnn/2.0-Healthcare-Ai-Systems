@@ -116,129 +116,66 @@ svg.chart{display:block;width:100%;height:auto}
   <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
   <h1>icuflow</h1>
   <p class="lede">An installable package for the three parts of a clinical prediction pipeline that are easiest to get wrong: subject-grouped splits, calibration, and alarm comparison at matched sensitivity.</p>
-  <div class="tags"><span class="tag ">pip-installable</span><span class="tag ">PyHealth-compatible shape</span><span class="tag ">CLI</span><span class="tag warn">not yet published</span></div>
+  <div class="tags"><span class="tag real">real MIMIC-IV demo</span><span class="tag ">subject-grouped splits</span><span class="tag ">installable package</span><span class="tag warn">not published</span></div>
 </header>
 <div class="banner">
   <span class="bi">Data</span>
-  <p>The package is real and installable from this repository, but it is NOT published to PyPI, so it has no download statistics and no users. The experiments below run on synthetic subjects designed to exhibit the specific failure each module prevents.</p>
+  <p>Run on the PhysioNet MIMIC-IV clinical database demo, retrieved with per-file hashes recorded in data/MANIFEST.json. MIMIC-IV records one person across several ICU stays, which is what makes a row-level or stay-level split leak: the same patient&#x27;s physiology ends up on both sides of it.</p>
 </div>
-
-<section>
-  <h2>Why these three</h2>
-  <div class="stack">
-    <p>They are the parts of a clinical prediction pipeline that get
-    re-implemented in every project and get quietly wrong in most of them. The
-    functions take and return plain arrays, so they drop into an existing PyHealth
-    or RHealth task without adopting another framework.</p>
-  </div>
-</section>
 
 <section>
   <h2>This run</h2>
   <div class="stack-lg">
-    <div class="metrics"><div class="metric"><span class="mk">Leakage inflation</span><span class="mv">+23.1%</span><span class="mn">AUROC from splitting rows not subjects</span></div><div class="metric"><span class="mk">ECE reduction</span><span class="mv">37%</span><span class="mn">on an overconfident score</span></div><div class="metric"><span class="mk">False alerts</span><span class="mv">−4.3%</span><span class="mn">at matched 80% sensitivity</span></div><div class="metric"><span class="mk">Public API</span><span class="mv">14</span><span class="mn">functions and classes</span></div></div>
+    <div class="metrics"><div class="metric"><span class="mk">Row split</span><span class="mv">0.9058</span><span class="mn">AUROC, the leaky split</span></div><div class="metric"><span class="mk">Subject split</span><span class="mv">0.4989</span><span class="mn">AUROC, the correct split</span></div><div class="metric"><span class="mk">Inflation</span><span class="mv">+81.6%</span><span class="mn">+0.4070 AUROC, invented by the split</span></div><div class="metric"><span class="mk">Public API</span><span class="mv">14</span><span class="mn">exports in icuflow 0.1.0</span></div></div>
     <p class="mono" style="color:var(--muted);font-size:12.5px">
-      generated 2026-08-31T21:45:04+00:00 &middot;
+      generated 2026-09-06T23:57:16+00:00 &middot;
       icuflow 0.1.0 &middot;
-      200 subjects, 16,000 rows
+      97 subjects over 134 stays
     </p>
   </div>
 </section>
 
 <section>
-  <h2>Subject leakage, measured</h2>
+  <h2>The same model and features, evaluated two ways</h2>
   <div class="stack-lg">
-    <figure><svg class="chart" viewBox="0 0 680 79" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">random row split</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.6870</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">subject-grouped split</text><rect x="190" y="44" width="342.9" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="541.9" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.5583</text></svg></figure>
-    <div class="tw"><table><thead><tr><th>Split strategy</th><th>Test AUROC</th><th>What it means</th></tr></thead><tbody><tr><td>Random row split</td><td class="n">0.6870</td><td>The same subjects appear in train and test</td></tr><tr><td>Subject-grouped split</td><td class="n">0.5583</td><td>Every test subject is unseen</td></tr><tr><td>Difference</td><td class="n">+0.1287</td><td>23.1% of the honest score, invented by the split</td></tr></tbody></table></div>
-    <div class="note">
-      <h3>The first version of this experiment showed no leakage at all</h3>
-      <p>Giving each subject an offset that shifted both a feature and the label
-      produced identical scores under both splits. That is correct behaviour: the
-      offset-to-label relationship is real and <em>generalises</em>, so a model
-      learning it does just as well on unseen subjects. Row-splitting looked harmless.</p>
-      <p>Leakage needs a subject effect that does not generalise. Here each subject
-      carries a random label propensity unrelated to anything predictive, plus a
-      near-noise-free fingerprint feature that identifies them. A model trained on rows
-      memorises fingerprint → propensity and scores well on held-out rows from subjects
-      it has already seen; on held-out subjects the fingerprints are new and the
-      memorised mapping is worth nothing.</p>
-      <p>That is the structure of a patient baseline in ICU data, and it is why
-      row-splitting inflates published clinical results.</p>
-    </div>
+    <figure><svg class="chart" viewBox="0 0 680 114" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">by row (leaky)</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.9058</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">by subject (correct)</text><rect x="190" y="44" width="232.4" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="431.4" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.4989</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">chance</text><rect x="190" y="79" width="232.9" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="431.9" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.5000</text></svg></figure>
+    <div class="tw"><table><thead><tr><th>Split strategy</th><th>Test AUROC</th><th>What it means</th></tr></thead><tbody><tr><td>By row — the leaky split</td><td class="n">0.9058</td><td>the same person appears on both sides</td></tr><tr><td>By subject_id — the correct split</td><td class="n">0.4989</td><td>every test subject is unseen</td></tr><tr><td>Difference</td><td class="n">+0.4070</td><td>81.6% of the honest score</td></tr></tbody></table></div>
+    <p>The subject-split score sits at chance. On a cohort this small the model has
+    learned nothing that generalises to a new person, and the row-split figure was
+    entirely leakage. Both halves are reported together: the direction is a real
+    methodological finding, the magnitude depends on cohort size and readmission
+    structure and must not be quoted as a general rate.</p>
   </div>
 </section>
 
 <section>
-  <h2>Calibration, including when not to use it</h2>
+  <h2>Why this cohort leaks at all</h2>
   <div class="stack-lg">
-    <div class="tw"><table><thead><tr><th>Score</th><th>Raw ECE</th><th>Isotonic</th><th>Platt</th><th>AUROC before → after</th></tr></thead><tbody><tr><td>already well calibrated (boosted trees, log loss)</td><td class="n">0.07144</td><td class="n">0.14079</td><td class="n">0.13196</td><td>0.632 → 0.635</td></tr><tr><td>overconfident (monotone distortion, same ranking)</td><td class="n">0.22481</td><td class="n">0.14079</td><td class="n">0.13773</td><td>0.632 → 0.635</td></tr></tbody></table></div>
-    <div class="note">
-      <h3>Both rows are here on purpose</h3>
-      <p>Boosted trees trained on log loss come out close to calibrated already, and on
-      those, calibration is a no-op that adds variance &mdash; ECE goes from
-      0.071 to 0.141, i.e. slightly
-      <em>worse</em>. The module earns its place on scores that are not probabilities:
-      a margin, a rank, an overconfident output. On the distorted score, ECE drops from
-      0.225 to 0.141.</p>
-      <p>AUROC is unchanged in both rows, which is the check that the calibrators are
-      monotone: calibration must move probabilities without reordering patients.
-      Publishing only the flattering row would misrepresent when to reach for this.</p>
-    </div>
+    <div class="tw"><table><thead><tr><th></th><th>Value</th></tr></thead><tbody><tr><td>Distinct people (subject_id)</td><td class="n">97</td></tr><tr><td>ICU stays (stay_id)</td><td class="n">134</td></tr><tr><td>Readmissions — people with more than one stay</td><td class="n">37</td></tr><tr><td>Rows on the resampled grid</td><td class="n">22,512</td></tr><tr><td>Positive rate</td><td class="n">2.838%</td></tr><tr><td>Event</td><td class="n">SpO2 &lt; 90% within 4 h</td></tr><tr><td>Grouping key</td><td class="n">subject_id (the person), not stay_id</td></tr></tbody></table></div>
+    <p>37 readmissions across 97 people is what makes
+    a stay-level split almost as leaky as a row-level one. Grouping by stay feels careful
+    and is not enough; only grouping by the person is.</p>
   </div>
 </section>
 
 <section>
-  <h2>Alarm comparison</h2>
+  <h2>The guards that ship with it</h2>
   <div class="stack-lg">
-    <div class="tw"><table><thead><tr><th></th><th>Ward baseline</th><th>Model</th><th>Change</th></tr></thead><tbody><tr><td>Sensitivity</td><td class="n">0.800</td><td class="n">0.800</td><td>matched by construction</td></tr><tr><td>False alerts</td><td class="n">2,342</td><td class="n">2,241</td><td>4.3% fewer</td></tr></tbody></table></div>
-    <p>Both systems are driven to the same sensitivity before false alerts are counted.
-    Any alerting system can cut false alarms by catching fewer events, so a comparison
-    made at each system's own convenient operating point is not a comparison.</p>
+    <div class="tw"><table><thead><tr><th>Guard</th><th>Fired correctly</th><th>What it refuses</th></tr></thead><tbody><tr><td>Subject appearing in both splits</td><td>yes</td><td>a split whose train and test sides share a subject_id</td></tr><tr><td>Row with an event already active</td><td>yes</td><td>predicting an event that is already under way</td></tr><tr><td>Row without full follow-up</td><td>yes</td><td>a label that could not have been observed</td></tr></tbody></table></div>
+    <p>These are assertions a pipeline can call, not conventions someone has to remember.
+    <code>icuflow check-split</code> exits non-zero rather than scoring a leaky
+    split. The package is installable from this repository and is
+    <strong>not published</strong>, so it has no downloads and no users.</p>
   </div>
 </section>
 
 <section>
-  <h2>Guards</h2>
-  <div class="stack-lg">
-    <div class="tw"><table><thead><tr><th>Guard</th><th>Fired correctly</th></tr></thead><tbody><tr><td>Subject appearing in both splits raises SubjectLeakError</td><td>yes</td></tr><tr><td>Row with an event already active is dropped</td><td>yes</td></tr><tr><td>Row without full follow-up is dropped</td><td>yes</td></tr></tbody></table></div>
-    <p>These are assertions a pipeline can call, not conventions someone has to
-    remember. <code>assert_no_subject_leak</code> is meant to sit in a test.</p>
-  </div>
-</section>
-
-<section>
-  <h2>Install and use</h2>
+  <h2>Reproduce</h2>
   <div class="stack">
-    <pre>pip install -e .            # from this directory
-
-python -c "
-import numpy as np, icuflow
-sp = icuflow.split_by_subject(subject_ids, test_frac=0.3, seed=0)
-icuflow.assert_no_subject_leak(subject_ids, sp.train, sp.test)
-"
-
-icuflow check-split predictions.csv --subject-col subject_id
-icuflow score predictions.csv --label-col y --score-col p --baseline-col news2</pre>
-  </div>
-</section>
-
-<section>
-  <h2>What this does not establish</h2>
-  <div class="stack">
-    <ul class="tight">
-      <li><strong>Not published.</strong> The package is installable from this
-      repository and is not on PyPI. It has no downloads, no registry statistics
-      and no users, and nothing here should be described as adopted.</li>
-      <li>Compatibility with PyHealth and RHealth is at the level of data shapes:
-      plain arrays in, plain arrays out. It has not been tested against either
-      framework's task API.</li>
-      <li>Every experiment above runs on synthetic subjects constructed to exhibit
-      the specific failure each module prevents. That demonstrates the module works
-      on the problem it was built for; it is not evidence about real cohorts.</li>
-      <li>The calibrators are small hand-written implementations, not
-      scikit-learn's. They are here so the package has no heavy dependency, and
-      they have not been benchmarked against it.</li>
-    </ul>
+    <pre>python -m src.demo --real
+# -&gt; results/latest-real.json
+icuflow check-split --by stay_id   # exits non-zero: refuses the leaky split
+pytest -q</pre>
   </div>
 </section>
 
@@ -246,7 +183,7 @@ icuflow score predictions.csv --label-col y --score-col p --baseline-col news2</
   <p>2.0-Healthcare-Ai-Systems &middot; pyhealth-rhealth-extension &middot; part of a five-repository portfolio on optimization-driven,
      system-level decision frameworks.</p>
   <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
-     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+     project and reading <code>results.json</code>. Nothing here is hand-entered. Built from results/latest-real.json. About a hundred ICU stays: the direction of the leakage effect is meaningful, its magnitude is not a population estimate.</p>
 </div>
 </div>
 </body>
