@@ -31,7 +31,6 @@ data/
   |-- sample/
 docs/
   |-- DATA.md
-  |-- EVIDENCE.md
   |-- METHOD.md
 icuflow/
   |-- __init__.py

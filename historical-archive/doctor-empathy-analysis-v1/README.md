@@ -612,6 +612,6 @@ This version is kept rather than deleted because it holds artifacts the rewrite
 does not reproduce: three trained models (`outputs/models/*.pkl`), the figures
 generated from them, and the original sample dataset.
 
-For the [redacted], cite the rewrite. This folder is prior work, not current
+Cite the rewrite, not this folder. This is prior work, not current
 evidence — its results were produced on a small sample and are not labelled
 with the scale caveats the rewrite states explicitly.
