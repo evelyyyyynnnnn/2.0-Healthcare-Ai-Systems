@@ -28,6 +28,11 @@ META = {
 
 
 def build_site(results: dict) -> pathlib.Path:
+    # The real run and the authored run have different shapes; dispatch on the
+    # flag the results file carries rather than on which keys happen to exist.
+    if not results.get("is_synthetic", True):
+        return build_site_real(results)
+
     c, lx, ev = results["corpus"], results["lexicon"], results["evaluation"]
     mt, ab = results["manner_vs_topic"], results["ablation"]
     we = results["worked_example"]
@@ -230,3 +235,135 @@ python -m src.demo</pre>
 </section>
 """
     return sk.build(ROOT, META, body, results)
+
+
+# --------------------------------------------------------------------------
+# Real-data page: the lexicon run against real doctor-patient consultations.
+# --------------------------------------------------------------------------
+
+REAL_META = dict(META)
+REAL_META.update({
+    "tags": [("real MTS-Dialog", "real"), ("1,076 consultations", ""),
+             ("cue lexicon", ""), ("validity not computed", "")],
+    "banner": "Run against MTS-Dialog, a public corpus of real doctor-patient "
+              "consultation transcripts, retrieved with per-file SHA-256 recorded in "
+              "data/MANIFEST.json. This is the first test of the lexicon on speech "
+              "nobody wrote for it.",
+    "datanote": "Built from results/latest-real.json. MTS-Dialog is annotated for "
+                "clinical note sections, not for communication quality, so no "
+                "correlation with clinician-assigned empathy ratings is computed and "
+                "none is claimed.",
+})
+
+
+def build_site_real(results: dict) -> pathlib.Path:
+    sd = results["score_distribution"]
+    st = results.get("structure", {})
+    prov = results.get("provenance", {})
+    cues = results.get("cue_coverage", {})
+
+    metrics = sk.metric_grid([
+        ("Consultations scored", f"{results['n_transcripts']:,}",
+         "real MTS-Dialog transcripts"),
+        ("Fired at least one cue", f"{(1 - sd['share_with_no_cue']) * 100:.1f}%",
+         f"{results['n_transcripts'] - sd['transcripts_with_no_cue']:,} of "
+         f"{results['n_transcripts']:,}"),
+        ("Distinct cues that fired", results.get("n_distinct_cues_fired", 0),
+         "the rest never matched"),
+        ("Median score", f"{sd['median']:.2f}", f"mean {sd['mean']:.2f}"),
+    ])
+
+    files_tbl = sk.table(
+        ["File", "Rows", "Transcripts", "SHA-256 (first 16)"],
+        [[f["file"], f"{f['rows']:,}", f"{f['transcripts']:,}", f["sha256"]]
+         for f in results.get("files", [])],
+        numeric_cols=(1, 2))
+
+    dist_tbl = sk.table(
+        ["Statistic", "Value"],
+        [["Minimum", f"{sd['min']:.3f}"], ["First quartile", f"{sd['q1']:.3f}"],
+         ["Median", f"{sd['median']:.3f}"], ["Mean", f"{sd['mean']:.3f}"],
+         ["Third quartile", f"{sd['q3']:.3f}"], ["Maximum", f"{sd['max']:.3f}"],
+         ["Transcripts on which no cue fired",
+          f"{sd['transcripts_with_no_cue']:,} of {results['n_transcripts']:,}"]],
+        numeric_cols=(1,))
+
+    top = sorted(cues.items(), key=lambda kv: -kv[1])[:14]
+    cue_chart = sk.bar_chart([(f'"{c}"', n) for c, n in top], fmt="{:.0f}")
+    cue_tbl = sk.table(
+        ["Cue", "Transcripts it appeared in", "Share of corpus"],
+        [[c, f"{n:,}", f"{n / results['n_transcripts'] * 100:.1f}%"] for c, n in top],
+        numeric_cols=(1, 2))
+
+    struct_tbl = sk.table(
+        ["Measure", "Median across the corpus"],
+        [["Share of tokens spoken by the doctor",
+          f"{st.get('median_doctor_token_share', 0) * 100:.1f}%"],
+         ["Share of doctor turns that are questions",
+          f"{st.get('median_question_rate', 0) * 100:.1f}%"]],
+        numeric_cols=(1,))
+
+    body = f"""
+<section>
+  <h2>This run</h2>
+  <div class="stack-lg">
+    {metrics}
+    <p class="mono" style="color:var(--muted);font-size:12.5px">
+      generated {sk.esc(results['generated_at'])} &middot;
+      {prov.get('n_transcripts', 0):,} transcripts used &middot;
+      {prov.get('skipped', {}).get('too_short', 0)} skipped as too short
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>Corpus</h2>
+  <div class="stack-lg">
+    {files_tbl}
+    <p>MTS-Dialog is a public research dataset of real consultation transcripts. Every
+    file is recorded with its URL, hash and retrieval time, so the same corpus can be
+    re-fetched and the lexicon re-scored against it.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Score distribution across {results['n_transcripts']:,} real consultations</h2>
+  <div class="stack-lg">
+    {dist_tbl}
+    <p>The median is {sd['median']:.2f}. A hand-built keyword lexicon is a blunt
+    instrument on real clinical speech, and measuring how blunt is the point of running
+    it here rather than on authored examples where the cues were guaranteed to appear.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Which cues actually fired</h2>
+  <div class="stack-lg">
+    {cue_chart}
+    {cue_tbl}
+    <p>{results.get('n_distinct_cues_fired', 0)} distinct cues matched anywhere in the
+    corpus. The most frequent is a common adverb that carries no empathy on its own,
+    which is exactly the kind of thing a lexicon has to be measured against real speech
+    to discover.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Conversation structure, measured separately from the lexicon</h2>
+  <div class="stack-lg">
+    {struct_tbl}
+    <p>These two are computed from the transcript shape rather than from the cue list,
+    so they stand whatever the lexicon does.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Reproduce</h2>
+  <div class="stack">
+    <pre>python -m src.demo --real
+# -&gt; results/latest-real.json
+pytest -q</pre>
+  </div>
+</section>
+"""
+    return sk.build(ROOT, REAL_META, body, results)
