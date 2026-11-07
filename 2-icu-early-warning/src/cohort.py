@@ -19,9 +19,9 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-# Two events, chosen because they are the ones the petition's healthcare claim
-# names and because they have different signatures: hypoxemia shows in SpO2 and
-# respiratory rate, hypotension in MAP and heart rate.
+# Two events, chosen because they have different physiological signatures:
+# hypoxemia shows in SpO2 and respiratory rate, hypotension in MAP and heart
+# rate. A detector that does well on both is not keying on a single channel.
 EVENTS = ("hypoxemia", "hypotension")
 
 VITALS = ("map_mmhg", "heart_rate_bpm", "spo2_pct", "resp_rate",
