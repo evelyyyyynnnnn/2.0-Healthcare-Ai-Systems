@@ -116,138 +116,72 @@ svg.chart{display:block;width:100%;height:auto}
   <div class="eyebrow">2.0-Healthcare-Ai-Systems &middot; Healthcare Safety</div>
   <h1>Clinical Empathy Analysis</h1>
   <p class="lede">Measuring empathic behaviour in bilingual consultation transcripts by fusing a theory-grounded weighted lexicon with structural features of the conversation.</p>
-  <div class="tags"><span class="tag ">EN + 中文</span><span class="tag ">73 weighted cues</span><span class="tag ">leave-one-out</span><span class="tag demo">authored corpus</span><span class="tag warn">circular validation</span></div>
+  <div class="tags"><span class="tag real">real MTS-Dialog</span><span class="tag ">1,076 consultations</span><span class="tag ">cue lexicon</span><span class="tag ">validity not computed</span></div>
 </header>
 <div class="banner">
   <span class="bi">Data</span>
-  <p>The correlation on this page is CIRCULAR and must not be read as validity. The same person wrote the transcripts and the lexicon, so the transcripts contain the cues the lexicon looks for. What is demonstrated is that the pipeline is internally consistent and that the evaluation protocol is sound — not that the measure tracks clinical empathy.</p>
+  <p>Run against MTS-Dialog, a public corpus of real doctor-patient consultation transcripts, retrieved with per-file SHA-256 recorded in data/MANIFEST.json. This is the first test of the lexicon on speech nobody wrote for it.</p>
 </div>
-
-<section>
-  <h2>What is being measured</h2>
-  <div class="stack">
-    <p>Not "nice words". Clinical empathy research measures specific behaviours, and the
-    lexicon is organised by the behaviour each cue signals, following the structure of
-    established consultation-coding schemes — the Empathic Communication Coding System
-    and the socio-emotional categories of the Roter Interaction Analysis System.</p>
-    <p>Scores are length-normalised per 100 tokens. A long consultation accumulates cue
-    hits simply by being long, so an unnormalised count measures duration.</p>
-  </div>
-</section>
 
 <section>
   <h2>This run</h2>
   <div class="stack-lg">
-    <div class="metrics"><div class="metric"><span class="mk">Transcripts</span><span class="mv">16</span><span class="mn">10 EN / 6 中文, 76 turns</span></div><div class="metric"><span class="mk">Lexicon cues</span><span class="mv">73</span><span class="mn">6 categories</span></div><div class="metric"><span class="mk">LOO correlation</span><span class="mv">+0.946</span><span class="mn">circular — see the banner</span></div><div class="metric"><span class="mk">Mean abs. error</span><span class="mv">0.35</span><span class="mn">on a 0–4 rating scale</span></div></div>
+    <div class="metrics"><div class="metric"><span class="mk">Consultations scored</span><span class="mv">1,076</span><span class="mn">real MTS-Dialog transcripts</span></div><div class="metric"><span class="mk">Fired at least one cue</span><span class="mv">32.1%</span><span class="mn">345 of 1,076</span></div><div class="metric"><span class="mk">Distinct cues that fired</span><span class="mv">25</span><span class="mn">the rest never matched</span></div><div class="metric"><span class="mk">Median score</span><span class="mv">0.00</span><span class="mn">mean 0.58</span></div></div>
     <p class="mono" style="color:var(--muted);font-size:12.5px">
-      generated 2026-08-31T21:44:40+00:00 &middot;
-      ratings 0.5–4.0, mean 2.438
-      (sd 1.21) &middot;
-      0 lexicon structural problems
+      generated 2026-09-06T23:54:23+00:00 &middot;
+      1,076 transcripts used &middot;
+      225 skipped as too short
     </p>
   </div>
 </section>
 
 <section>
-  <h2>The lexicon</h2>
+  <h2>Corpus</h2>
   <div class="stack-lg">
-    <div class="tw"><table><thead><tr><th>Category</th><th>Cues</th><th>Behaviour it indexes</th></tr></thead><tbody><tr><td>acknowledgement</td><td class="n">14</td><td>Naming or reflecting the patient&#x27;s emotion back to them</td></tr><tr><td>validation</td><td class="n">14</td><td>Explicit emotional support; normalising the experience</td></tr><tr><td>exploration</td><td class="n">12</td><td>Inviting the patient to say more — the strongest behavioural signal</td></tr><tr><td>partnership</td><td class="n">11</td><td>Shared decision-making; checking understanding</td></tr><tr><td>warmth</td><td class="n">9</td><td>Weak individually, real in aggregate</td></tr><tr><td>dismissal</td><td class="n">13</td><td>Negative weights. Without these, a curt consultation scores as neutral</td></tr></tbody></table></div>
-    <div class="note">
-      <h3>Why dismissal carries negative weight</h3>
-      <p>Empathy is not only the presence of warmth. A lexicon with no negative
-      category scores a curt, blame-shifting consultation as merely neutral, which is
-      exactly the case a quality measure needs to catch. Removing the dismissal cues
-      drops the correlation from +0.946 to
-      +0.933.</p>
-    </div>
+    <div class="tw"><table><thead><tr><th>File</th><th>Rows</th><th>Transcripts</th><th>SHA-256 (first 16)</th></tr></thead><tbody><tr><td>mts-dialog/MTS-Dialog-TrainingSet.csv</td><td class="n">1,201</td><td class="n">997</td><td>65a28681dd59fc15</td></tr><tr><td>mts-dialog/MTS-Dialog-ValidationSet.csv</td><td class="n">100</td><td class="n">79</td><td>227206520c453438</td></tr></tbody></table></div>
+    <p>MTS-Dialog is a public research dataset of real consultation transcripts. Every
+    file is recorded with its URL, hash and retrieval time, so the same corpus can be
+    re-fetched and the lexicon re-scored against it.</p>
   </div>
 </section>
 
 <section>
-  <h2>Agreement with the ratings</h2>
+  <h2>Score distribution across 1,076 real consultations</h2>
   <div class="stack-lg">
-    <div class="tw"><table><thead><tr><th>Predictor</th><th>n</th><th>Pearson r</th><th>Spearman ρ</th><th>MAE</th></tr></thead><tbody><tr><td>lexicon score alone</td><td class="n">16</td><td class="n">+0.893</td><td class="n">+0.785</td><td class="n">9.085</td></tr><tr><td>ridge over all features (LOO)</td><td class="n">16</td><td class="n">+0.946</td><td class="n">+0.932</td><td class="n">0.352</td></tr><tr><td>English subset</td><td class="n">10</td><td class="n">+0.972</td><td class="n">+0.939</td><td class="n">0.308</td></tr><tr><td>Mandarin subset</td><td class="n">6</td><td class="n">+0.970</td><td class="n">+1.000</td><td class="n">0.425</td></tr></tbody></table></div>
-    <figure><svg class="chart" viewBox="0 0 680 210" role="img" aria-label="Line chart"><line x1="46" y1="12.0" x2="666" y2="12.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="16.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">4.55</text><line x1="46" y1="54.0" x2="666" y2="54.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="58.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">3.38</text><line x1="46" y1="96.0" x2="666" y2="96.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="100.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">2.21</text><line x1="46" y1="138.0" x2="666" y2="138.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="142.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">1.04</text><line x1="46" y1="180.0" x2="666" y2="180.0" stroke="currentColor" opacity=".12" stroke-width="1"/><text x="38" y="184.0" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">-0.13</text><path d="M46.0,175.3 L666.0,31.6" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="25" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--accent)">ideal</text><path d="M123.5,180.0 L123.5,134.0 L201.0,132.9 L201.0,123.2 L278.5,143.4 L356.0,119.3 L356.0,100.1 L433.5,84.3 L511.0,80.3 L511.0,72.8 L511.0,66.4 L588.5,65.3 L588.5,39.4 L666.0,47.0 L666.0,42.6 L666.0,12.0" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="666" y="40" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10.5" fill="var(--warn)">predicted</text><text x="356.0" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">analyst rating (0–4)</text><text x="12" y="96.0" text-anchor="middle" transform="rotate(-90 12 96.0)" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" opacity=".5">predicted</text></svg></figure>
-    <div class="note warn" style="background:var(--warn-bg);border-color:transparent">
-      <h3>This correlation is circular</h3>
-      <p>One person wrote the transcripts, the ratings <em>and</em> the lexicon. The
-      transcripts therefore contain the cues the lexicon looks for, and the ratings
-      reflect the same intuitions that set the weights. A correlation of
-      +0.946 under these conditions measures internal
-      consistency, not validity.</p>
-      <p>What the number does establish is narrower and still worth having: the
-      pipeline runs end to end, the evaluation protocol is honest (leave-one-out, no
-      fold reuse), and the features separate the cases they were designed to separate.
-      Validity requires a collected corpus with ratings from clinicians who did not
-      build the measure — and inter-rater agreement reported alongside.</p>
-    </div>
-    <div class="tw"><table><thead><tr><th>ID</th><th>Lang</th><th>Rating</th><th>Lexicon score</th><th>Predicted</th><th>Error</th></tr></thead><tbody><tr><td>EN-01</td><td>en</td><td class="n">4.0</td><td class="n">19.41</td><td class="n">4.55</td><td class="n">+0.55</td></tr><tr><td>EN-02</td><td>en</td><td class="n">0.5</td><td class="n">-15.19</td><td class="n">-0.13</td><td class="n">-0.63</td></tr><tr><td>EN-03</td><td>en</td><td class="n">2.5</td><td class="n">14.00</td><td class="n">2.54</td><td class="n">+0.04</td></tr><tr><td>EN-04</td><td>en</td><td class="n">3.5</td><td class="n">11.14</td><td class="n">3.78</td><td class="n">+0.28</td></tr><tr><td>EN-05</td><td>en</td><td class="n">1.0</td><td class="n">-7.83</td><td class="n">1.18</td><td class="n">+0.18</td></tr><tr><td>EN-06</td><td>en</td><td class="n">3.0</td><td class="n">12.50</td><td class="n">3.03</td><td class="n">+0.03</td></tr><tr><td>EN-07</td><td>en</td><td class="n">2.0</td><td class="n">15.00</td><td class="n">2.09</td><td class="n">+0.09</td></tr><tr><td>EN-08</td><td>en</td><td class="n">4.0</td><td class="n">16.12</td><td class="n">3.69</td><td class="n">-0.31</td></tr><tr><td>ZH-01</td><td>zh</td><td class="n">4.0</td><td class="n">13.61</td><td class="n">3.57</td><td class="n">-0.43</td></tr><tr><td>ZH-02</td><td>zh</td><td class="n">0.5</td><td class="n">-7.22</td><td class="n">1.15</td><td class="n">+0.65</td></tr><tr><td>ZH-03</td><td>zh</td><td class="n">3.5</td><td class="n">13.06</td><td class="n">3.06</td><td class="n">-0.44</td></tr><tr><td>ZH-04</td><td>zh</td><td class="n">2.0</td><td class="n">4.71</td><td class="n">1.56</td><td class="n">-0.44</td></tr><tr><td>ZH-05</td><td>zh</td><td class="n">1.0</td><td class="n">-2.61</td><td class="n">1.45</td><td class="n">+0.45</td></tr><tr><td>ZH-06</td><td>zh</td><td class="n">3.0</td><td class="n">8.30</td><td class="n">2.85</td><td class="n">-0.15</td></tr><tr><td>EN-09</td><td>en</td><td class="n">1.5</td><td class="n">-5.38</td><td class="n">0.89</td><td class="n">-0.61</td></tr><tr><td>EN-10</td><td>en</td><td class="n">3.0</td><td class="n">9.29</td><td class="n">2.64</td><td class="n">-0.36</td></tr></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Statistic</th><th>Value</th></tr></thead><tbody><tr><td>Minimum</td><td class="n">-3.571</td></tr><tr><td>First quartile</td><td class="n">0.000</td></tr><tr><td>Median</td><td class="n">0.000</td></tr><tr><td>Mean</td><td class="n">0.576</td></tr><tr><td>Third quartile</td><td class="n">0.409</td></tr><tr><td>Maximum</td><td class="n">17.000</td></tr><tr><td>Transcripts on which no cue fired</td><td class="n">731 of 1,076</td></tr></tbody></table></div>
+    <p>The median is 0.00. A hand-built keyword lexicon is a blunt
+    instrument on real clinical speech, and measuring how blunt is the point of running
+    it here rather than on authored examples where the cues were guaranteed to appear.</p>
   </div>
 </section>
 
 <section>
-  <h2>Manner or topic?</h2>
+  <h2>Which cues actually fired</h2>
   <div class="stack-lg">
-    <p>EN-09 and EN-10 carry identical clinical content — a patient worried about test
-    results, a doctor explaining a routine follow-up — and differ only in delivery. A
-    measure that scores them the same is tracking subject matter, not empathy.</p>
-    <div class="tw"><table><thead><tr><th>Transcript</th><th>Analyst rating</th><th>Lexicon score</th></tr></thead><tbody><tr><td>EN-09</td><td class="n">1.5</td><td class="n">-5.38</td></tr><tr><td>EN-10</td><td class="n">3.0</td><td class="n">9.29</td></tr></tbody></table></div>
-    <p>Separated by +14.67 points in the intended direction. This is the most
-    diagnostic pair in the corpus and the one worth reproducing first on real data.</p>
+    <figure><svg class="chart" viewBox="0 0 680 499" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;just&quot;</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">77</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;please&quot;</text><rect x="190" y="44" width="295.9" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="494.9" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">54</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;sorry to hear&quot;</text><rect x="190" y="79" width="279.5" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="478.5" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">51</text><text x="180" y="131.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;how are you feeling&quot;</text><rect x="190" y="114" width="246.6" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="445.6" y="131.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">45</text><text x="180" y="166.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;difficult&quot;</text><rect x="190" y="149" width="241.1" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="440.1" y="166.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">44</text><text x="180" y="201.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;we can&quot;</text><rect x="190" y="184" width="213.7" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="412.7" y="201.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">39</text><text x="180" y="236.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;anything else&quot;</text><rect x="190" y="219" width="202.8" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="401.8" y="236.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">37</text><text x="180" y="271.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;tell me more&quot;</text><rect x="190" y="254" width="137.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="336.0" y="271.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">25</text><text x="180" y="306.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;i understand&quot;</text><rect x="190" y="289" width="120.6" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="319.6" y="306.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">22</text><text x="180" y="341.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;thank you for&quot;</text><rect x="190" y="324" width="98.6" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="297.6" y="341.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">18</text><text x="180" y="376.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;i can see&quot;</text><rect x="190" y="359" width="82.2" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="281.2" y="376.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">15</text><text x="180" y="411.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;together&quot;</text><rect x="190" y="394" width="60.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="259.3" y="411.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">11</text><text x="180" y="446.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;must be&quot;</text><rect x="190" y="429" width="60.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="259.3" y="446.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">11</text><text x="180" y="481.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">&quot;let us&quot;</text><rect x="190" y="464" width="49.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="248.3" y="481.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">9</text></svg></figure>
+    <div class="tw"><table><thead><tr><th>Cue</th><th>Transcripts it appeared in</th><th>Share of corpus</th></tr></thead><tbody><tr><td>just</td><td class="n">77</td><td class="n">7.2%</td></tr><tr><td>please</td><td class="n">54</td><td class="n">5.0%</td></tr><tr><td>sorry to hear</td><td class="n">51</td><td class="n">4.7%</td></tr><tr><td>how are you feeling</td><td class="n">45</td><td class="n">4.2%</td></tr><tr><td>difficult</td><td class="n">44</td><td class="n">4.1%</td></tr><tr><td>we can</td><td class="n">39</td><td class="n">3.6%</td></tr><tr><td>anything else</td><td class="n">37</td><td class="n">3.4%</td></tr><tr><td>tell me more</td><td class="n">25</td><td class="n">2.3%</td></tr><tr><td>i understand</td><td class="n">22</td><td class="n">2.0%</td></tr><tr><td>thank you for</td><td class="n">18</td><td class="n">1.7%</td></tr><tr><td>i can see</td><td class="n">15</td><td class="n">1.4%</td></tr><tr><td>together</td><td class="n">11</td><td class="n">1.0%</td></tr><tr><td>must be</td><td class="n">11</td><td class="n">1.0%</td></tr><tr><td>let us</td><td class="n">9</td><td class="n">0.8%</td></tr></tbody></table></div>
+    <p>25 distinct cues matched anywhere in the
+    corpus. The most frequent is a common adverb that carries no empathy on its own,
+    which is exactly the kind of thing a lexicon has to be measured against real speech
+    to discover.</p>
   </div>
 </section>
 
 <section>
-  <h2>Which features carry it</h2>
+  <h2>Conversation structure, measured separately from the lexicon</h2>
   <div class="stack-lg">
-    <figure><svg class="chart" viewBox="0 0 680 149" role="img" aria-label="Bar chart of results"><text x="180" y="26.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">all features</text><rect x="190" y="9" width="422.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="621.0" y="26.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.946</text><text x="180" y="61.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">lexicon only</text><rect x="190" y="44" width="412.1" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="611.1" y="61.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.924</text><text x="180" y="96.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">structure only</text><rect x="190" y="79" width="308.0" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="507.0" y="96.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.691</text><text x="180" y="131.68" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".72">no dismissal cues</text><rect x="190" y="114" width="416.3" height="26" rx="3" fill="var(--accent)" opacity=".85"/><text x="615.3" y="131.68" font-family="IBM Plex Mono, monospace" font-size="11.5" fill="currentColor" opacity=".62">0.933</text></svg></figure>
-    <div class="tw"><table><thead><tr><th>Feature set</th><th>Features</th><th>Pearson r</th><th>MAE</th></tr></thead><tbody><tr><td>all features</td><td class="n">20</td><td class="n">+0.946</td><td class="n">0.352</td></tr><tr><td>lexicon only</td><td class="n">7</td><td class="n">+0.924</td><td class="n">0.404</td></tr><tr><td>structure only</td><td class="n">7</td><td class="n">+0.691</td><td class="n">0.800</td></tr><tr><td>no dismissal cues</td><td class="n">18</td><td class="n">+0.933</td><td class="n">0.407</td></tr></tbody></table></div>
-    <p>Structural features alone — who talks, how much, how many open questions —
-    reach +0.691
-    without reading a single word of content. That is a useful result in its own right,
-    because structural features survive translation and transcription error far better
-    than lexical ones.</p>
+    <div class="tw"><table><thead><tr><th>Measure</th><th>Median across the corpus</th></tr></thead><tbody><tr><td>Share of tokens spoken by the doctor</td><td class="n">52.2%</td></tr><tr><td>Share of doctor turns that are questions</td><td class="n">83.8%</td></tr></tbody></table></div>
+    <p>These two are computed from the transcript shape rather than from the cue list,
+    so they stand whatever the lexicon does.</p>
   </div>
 </section>
 
 <section>
-  <h2>A scored transcript</h2>
-  <div class="stack-lg">
-    <p>EN-01, rated 4.0, lexicon score
-    19.41. Every score decomposes into the cues that produced it,
-    so a clinician can disagree with a specific line rather than with a number.</p>
-    <div class="tw"><table><thead><tr><th>Cue</th><th>Category</th><th>Count</th><th>Weight</th><th>Contribution</th></tr></thead><tbody><tr><td>that sounds</td><td>acknowledgement</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>it makes sense</td><td>acknowledgement</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>frightening</td><td>validation</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>tell me more</td><td>exploration</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>what worries</td><td>exploration</td><td class="n">1</td><td class="n">1.0</td><td class="n">1.0</td></tr><tr><td>i can see</td><td>acknowledgement</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>worrying</td><td>validation</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>does that make sense</td><td>partnership</td><td class="n">1</td><td class="n">0.9</td><td class="n">0.9</td></tr><tr><td>we can</td><td>partnership</td><td class="n">1</td><td class="n">0.8</td><td class="n">0.8</td></tr><tr><td>together</td><td>partnership</td><td class="n">1</td><td class="n">0.8</td><td class="n">0.8</td></tr></tbody></table></div>
-  </div>
-</section>
-
-<section>
-  <h2>Reproduce it</h2>
+  <h2>Reproduce</h2>
   <div class="stack">
-    <pre>cd clinical-empathy-analysis
-pip install -r requirements.txt
-python -m pytest tests/ -q
-python -m src.demo</pre>
-  </div>
-</section>
-
-<section>
-  <h2>What this does not establish</h2>
-  <div class="stack">
-    <ul class="tight">
-      <li><strong>No validity evidence.</strong> The correlation is circular, as set out
-      above. Nothing here shows the measure tracks clinical empathy.</li>
-      <li>Sixteen authored transcripts is not a corpus. Leave-one-out on sixteen items
-      has error bars wide enough to contain most values you might care about.</li>
-      <li>No inter-rater agreement, because there is one rater.</li>
-      <li>No patient outcome is attached to any transcript, so nothing here speaks to
-      whether the measured behaviour helps anyone.</li>
-      <li>The Mandarin cues are a smaller set than the English ones and were written by
-      the same person; the near-identical cross-language correlation reflects that
-      symmetry in authoring, not demonstrated cross-lingual validity.</li>
-    </ul>
-    <p>The predecessor project trained on data synthesised at runtime and evaluated on
-    the same generator. This replaces that with a held-out protocol and an explicit
-    statement of what is still missing. The remaining gap is a real corpus.</p>
+    <pre>python -m src.demo --real
+# -&gt; results/latest-real.json
+pytest -q</pre>
   </div>
 </section>
 
@@ -255,7 +189,7 @@ python -m src.demo</pre>
   <p>2.0-Healthcare-Ai-Systems &middot; clinical-empathy-analysis &middot; part of a five-repository portfolio on optimization-driven,
      system-level decision frameworks.</p>
   <p>Every figure on this page was produced by running <code>python -m src.demo</code> in this
-     project and reading <code>results.json</code>. Nothing here is hand-entered. The run used clearly-labelled synthetic data; swap in the real source and the same pipeline reports real numbers.</p>
+     project and reading <code>results.json</code>. Nothing here is hand-entered. Built from results/latest-real.json. MTS-Dialog is annotated for clinical note sections, not for communication quality, so no correlation with clinician-assigned empathy ratings is computed and none is claimed.</p>
 </div>
 </div>
 </body>

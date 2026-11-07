@@ -4,18 +4,18 @@
 
 Clinical decision-support and patient-safety systems. This repository carries the Healthcare Safety pillar of the endeavor.
 
-Part of a five-repository portfolio supporting the endeavor described in the
-EB2-NIW petition: **optimization-driven, system-level decision frameworks** —
+Part of a five-repository portfolio on one theme: **optimization-driven,
+system-level decision frameworks** —
 integrating operations research, mathematical optimization and applied AI — for
 domains where a wrong decision carries systemic consequences. The three pillars
 are financial stability, healthcare safety and secure digital infrastructure.
 
 | | |
 |---|---|
-| Petition-grade projects today | 1 petition-grade project (empathy analysis, synthetic training data) |
+| Projects with measured results | 1 (empathy analysis, on synthetic training data) |
 | Verdict | **Needs 3 more — the thinnest repo against the strongest claims** |
 
-> "Petition-grade" means: original work, a stated method, real data at a stated
+> "Measured" means: original work, a stated method, real data at a stated
 > scale, a measured result, and a README a reviewer can follow. Counts exclude
 > duplicates, forks of third-party work, retired projects, and asset-only
 > folders.
@@ -79,8 +79,9 @@ Every rebuilt project carries the same skeleton: `README.md`, `src/`, `data/`, `
 
 ## Ground rules
 
-1. **No number without a run log.** Anything cited in the petition must appear
-   in that project's `results/README.md` with a run date behind it.
+1. **No number without a run log.** Any figure quoted anywhere in this
+   repository must appear in that project's `results/README.md` with a run
+   date behind it.
 2. **No simulated data under a real claim.** Sample data lives in
    `data/sample/`, labelled, and is never the source of a cited figure.
 3. **Adoption must be documentable** — named institutions, dated
@@ -88,4 +89,13 @@ Every rebuilt project carries the same skeleton: `README.md`, `src/`, `data/`, `
 4. **Third-party and forked code stays labelled** and is never counted.
 
 ---
-Scaffold generated from `NIW_Project_Portfolio_and_Gap_Plan.xlsx` (sheets: Repo Build-Out Plan, Core Ideas at a Glance, NIW Claim vs Repo Evidence, Notion 创业 Alignment). Structure only — no results are claimed here yet.
+Structure only — no results are claimed here unless a project's `results/README.md` records a dated run.
+
+## Licence
+
+[Apache License 2.0](LICENSE). The code, benchmarks and documentation in this
+repository may be reused, modified and redistributed under its terms, including
+by projects that need a patent grant to incorporate them.
+
+Third-party data and vendored code kept under `*/data/` and
+`historical-archive/` carry their own terms and are labelled where they appear.
