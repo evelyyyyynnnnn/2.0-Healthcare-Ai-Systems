@@ -6,19 +6,25 @@
 
 ## Status
 
-This is working code with a runnable demo and 32 tests. It is **not** a
-finished result.
+Working code, **32 passing tests**, and one measured run on real consultation
+transcripts. The result is a **negative** one and is reported as such.
 
-The correlation on this page is CIRCULAR and must not be read as validity. The same person wrote the transcripts and the lexicon, so the transcripts contain the cues the lexicon looks for. What is demonstrated is that the pipeline is internally consistent and that the evaluation protocol is sound — not that the measure tracks clinical empathy.
+Scored against **1,076 real doctor–patient transcripts** from MTS-Dialog. The
+lexicon fires no cue at all on **731 of them (67.9%)**, the median score
+across the corpus is **0.0**, and only **25 distinct cues** in the lexicon
+ever fire.
 
-Last run: `2026-08-31T18:32:12+00:00`
+**Validity is withheld, not reported.** MTS-Dialog is annotated for clinical note sections, not for communication quality. Correlation with clinician-assigned empathy ratings cannot be computed because no such ratings exist for these conversations. A correlation is not computed here because there is nothing honest to correlate against.
+
+Last reportable run: `2026-09-06T23:54:23+00:00`
 
 ## Quick start
 
 ```bash
 pip install -r requirements.txt
 python -m pytest tests/ -q     # 32 tests
-python -m src.demo             # runs everything, rewrites results/ and website/
+python -m data.fetch           # needs the sources in docs/DATA.md
+python -m src.demo --real      # the measured run -> results/latest-real.json
 ```
 
 ## Layout
