@@ -1,0 +1,31 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "name": "Healthcare AI Systems",
+  "description": "Clinical decision-support and patient-safety prototypes evaluated on open clinical data. Includes a measurement of subject-level leakage on the MIMIC-IV open-access demo (row-level split AUROC 0.906 against subject-grouped 0.499), calibration and alarm comparison at matched sensitivity, a physiological waveform pipeline, and an empathy-lexicon study reported as a negative result. Validity claims that the data cannot support are withheld with a stated reason.",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Wenke",
+      "familyName": "Du"
+    }
+  ],
+  "version": "1.0.0",
+  "dateModified": "2026-11-09",
+  "datePublished": "2026-11-09",
+  "license": "https://spdx.org/licenses/Apache-2.0",
+  "codeRepository": "https://github.com/evelyyyyynnnnn/2.0-healthcare-ai-systems",
+  "programmingLanguage": "Python",
+  "keywords": [
+    "clinical machine learning",
+    "MIMIC-IV",
+    "data leakage",
+    "subject-grouped validation",
+    "calibration",
+    "patient safety",
+    "reproducibility",
+    "negative results"
+  ],
+  "developmentStatus": "active",
+  "applicationCategory": "Research software"
+}
