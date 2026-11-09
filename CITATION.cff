@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using these metadata.
+type: software
+title: Healthcare AI Systems
+abstract: Clinical decision-support and patient-safety prototypes evaluated on open clinical data. Includes
+  a measurement of subject-level leakage on the MIMIC-IV open-access demo (row-level split AUROC 0.906
+  against subject-grouped 0.499), calibration and alarm comparison at matched sensitivity, a physiological
+  waveform pipeline, and an empathy-lexicon study reported as a negative result. Validity claims that
+  the data cannot support are withheld with a stated reason.
+authors:
+- given-names: Wenke
+  family-names: Du
+  orcid: https://orcid.org/0009-0007-5579-234X
+version: 1.0.0
+date-released: '2026-11-09'
+license: Apache-2.0
+repository-code: https://github.com/evelyyyyynnnnn/2.0-healthcare-ai-systems
+url: https://github.com/evelyyyyynnnnn/2.0-healthcare-ai-systems
+keywords:
+- clinical machine learning
+- MIMIC-IV
+- data leakage
+- subject-grouped validation
+- calibration
+- patient safety
+- reproducibility
+- negative results
