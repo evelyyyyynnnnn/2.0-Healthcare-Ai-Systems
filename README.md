@@ -1,6 +1,7 @@
 # 2.0 — Healthcare AI Systems
 
 [![tests](https://github.com/evelyyyyynnnnn/2.0-Healthcare-Ai-Systems/actions/workflows/tests.yml/badge.svg)](https://github.com/evelyyyyynnnnn/2.0-Healthcare-Ai-Systems/actions/workflows/tests.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24094763.svg)](https://doi.org/10.5281/zenodo.24094763)
 
 Clinical decision-support and patient-safety systems. This repository carries the Healthcare Safety pillar of the endeavor.
 
