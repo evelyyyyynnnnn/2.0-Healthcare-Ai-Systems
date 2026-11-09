@@ -4,7 +4,8 @@
   "description": "Clinical decision-support and patient-safety prototypes evaluated on open clinical data. Includes a measurement of subject-level leakage on the MIMIC-IV open-access demo (row-level split AUROC 0.906 against subject-grouped 0.499), calibration and alarm comparison at matched sensitivity, a physiological waveform pipeline, and an empathy-lexicon study reported as a negative result. Validity claims that the data cannot support are withheld with a stated reason.",
   "creators": [
     {
-      "name": "Du, Wenke"
+      "name": "Du, Wenke",
+      "orcid": "0009-0007-5579-234X"
     }
   ],
   "license": "apache-2.0",
