@@ -1,0 +1,112 @@
+---
+identifier: https://github.com/evelyyyyynnnnn/2.0-Healthcare-Ai-Systems/tree/main/2-icu-early-warning
+name: ICU Early-Warning Logistic Model (hypotension, 4-hour horizon)
+version: 1.0.0
+keywords:
+  - clinical early warning
+  - calibration
+  - alarm burden
+  - subject-grouped validation
+headline: A logistic early-warning model for hypotension on the MIMIC-IV open-access
+  demo, reported with calibration and alarm burden rather than discrimination alone.
+description: >
+  Predicts hypotension (mean arterial pressure < 65 mmHg) four hours ahead from
+  31 features derived from routine ICU charting. Observations are resampled onto
+  a half-hourly grid without looking forward. The card reports calibration error
+  and false alerts per 100 observations alongside AUROC, because a well-ranked
+  but badly calibrated alarm is the failure mode this project exists to expose.
+task:
+  - Binary classification
+  - Time-series early warning
+modelCategory:
+  - Supervised classification
+  - Logistic regression
+language:
+  - en
+license: https://www.apache.org/licenses/LICENSE-2.0
+parameterSize: 31 coefficients
+developmentStatus: Active
+dateCreated: 2026-09-06
+dateModified: 2026-09-06
+citation: >
+  Du, Wenke (2026). Healthcare AI Systems (Version 1.0.0) [Computer software].
+  Zenodo. https://doi.org/10.5281/zenodo.24094763
+codeRepository: https://github.com/evelyyyyynnnnn/2.0-Healthcare-Ai-Systems/tree/main/2-icu-early-warning
+referencePublication: # none; the software release is the citable artefact
+developmentLibrary: scikit-learn
+usageInstructions: >
+  python -m pytest tests/ -q ; python -m data.fetch ; python -m src.demo --real
+modelRisks:
+  - The cohort is a demonstration, not a study. About 100 ICU stays is enough to
+    show the pipeline is sound and the comparison is fair; it is not enough to
+    estimate population performance, and no clinical claim should rest on it.
+  - Trained and evaluated on a single open-access demo extract of one US hospital
+    system. Transfer to other sites is untested.
+evaluationMetrics:
+  - AUROC
+  - AUPRC
+  - Expected calibration error
+  - False alerts per 100 observations at matched sensitivity
+evaluationResults: >
+  Subject-grouped split: 94 training patients, 40 test patients, 5,303 test rows,
+  target sensitivity 0.80. Logistic model: AUROC 0.7915, AUPRC 0.5911,
+  expected calibration error 0.0446, 22.9 false alerts per 100 observations.
+  Single-threshold alarm baseline on the same split: AUROC 0.7481, AUPRC 0.5727,
+  expected calibration error 0.4158, 31.8 false alerts per 100 observations.
+softwareRequirements:
+  - Python 3.11
+  - scikit-learn
+storageRequirements:
+  - 50 MB
+memoryRequirements:
+  - 2 GB of RAM
+operatingSystem:
+  - Linux
+  - macOS
+processorRequirements: # CPU only
+GPURequirements: # none
+hasCO2eEmissions: # not measured for this run
+distribution:
+  - encodingFormat: application/json
+    contentUrl: https://github.com/evelyyyyynnnnn/2.0-Healthcare-Ai-Systems/blob/main/2-icu-early-warning/results/latest-real.json
+    contentSize: null
+    quantizationBits:
+    quantizationMethod:
+trainedOn:
+  - identifier: https://doi.org/10.13026/dp1f-ex47
+    name: PhysioNet MIMIC-IV Clinical Database Demo
+    description: >
+      Open-access demo extract. 134 ICU stays built from 140 in the source files
+      (6 skipped as too short); 24,304 gridded observations; 12,152 patient-hours.
+      Source files are pinned by SHA-256 in data/MANIFEST.json.
+    url: https://physionet.org/content/mimic-iv-demo/
+testedOn:
+  - identifier: https://doi.org/10.13026/dp1f-ex47
+    name: PhysioNet MIMIC-IV Clinical Database Demo (held-out subjects)
+    description: >
+      40 test patients, grouped by subject so that no patient appears in both
+      training and test.
+evaluatedOn:
+  - identifier: https://doi.org/10.13026/dp1f-ex47
+    name: PhysioNet MIMIC-IV Clinical Database Demo (held-out subjects)
+    description: Same held-out subject split as testedOn.
+validatedOn: # no external validation cohort was available
+author:
+  - name: Wenke Du
+    identifier: https://orcid.org/0009-0007-5579-234X
+successorOf: # first released version
+funder: # unfunded
+sharedBy:
+  - name: Wenke Du
+    identifier: https://orcid.org/0009-0007-5579-234X
+wasGeneratedBy:
+  -
+    trainingRegion:
+    cloudProvider: # trained locally
+    duration: under 1 minute
+    hardwareType: CPU
+fineTunedFromModel: # trained from scratch
+sdPublisher:
+  - name: Wenke Du
+    url: https://orcid.org/0009-0007-5579-234X
+sdLicense: https://www.apache.org/licenses/LICENSE-2.0
